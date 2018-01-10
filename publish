@@ -7,4 +7,4 @@ mkdir docs
 cp -r dist/* docs
 git add docs
 git commit -m "publish new version"
-git push
+git push -f
