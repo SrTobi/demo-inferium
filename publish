@@ -1,5 +1,6 @@
 #!/bin/sh
 rm -r node_modules dist
+git rebase master
 git rm -r docs
 npm install
 npm run bundle
