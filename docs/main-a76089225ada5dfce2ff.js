@@ -26,12 +26,14 @@ var React = __webpack_require__(20);
 var mobx_1 = __webpack_require__(84);
 var mobx = __webpack_require__(192);
 var react_monaco_editor_1 = __webpack_require__(193);
-__webpack_require__(197);
+var predefs_1 = __webpack_require__(197);
+__webpack_require__(198);
 var InputPanel = /** @class */ (function (_super) {
     __extends(InputPanel, _super);
     function InputPanel() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super.call(this, {}) || this;
         _this.error = undefined;
+        _this.code = predefs_1.predefs[0].code;
         return _this;
     }
     InputPanel.prototype.infer = function (code) {
@@ -43,17 +45,30 @@ var InputPanel = /** @class */ (function (_super) {
             this.error = e.toString();
         }
     };
+    InputPanel.prototype.onChangeExample = function (ev) {
+        var value = ev.target.value;
+        this.example = value;
+        var predef = predefs_1.predefs.find(function (p) { return p.name == value; });
+        if (predef) {
+            this.code = predef.code;
+        }
+    };
     InputPanel.prototype.render = function () {
         var _this = this;
         return (React.createElement("div", null,
             React.createElement("div", { className: "panel panel-default config-panel" },
                 React.createElement("div", { className: "panel-body collapse in" },
                     React.createElement(react_monaco_editor_1.default, { height: 400, width: "100%", language: "javascript", value: this.code, onChange: function (code) { return _this.code = code; } }))),
+            React.createElement("div", { style: { textAlign: "center" } }, "Be careful... recursion does not work at the moment... this is an alpha version after all"),
             React.createElement("div", { className: "panel panel-default config-panel" },
-                React.createElement("button", { type: "button", onClick: function () { return _this.infer(_this.code); } }, "Infer"),
-                React.createElement("span", { className: "error-box" },
-                    " ",
-                    this.error ? "Error: " + this.error : "")),
+                React.createElement("span", null,
+                    React.createElement("button", { type: "button", onClick: function () { return _this.infer(_this.code); } }, "Infer"),
+                    React.createElement("span", { className: "error-box" },
+                        " ",
+                        this.error ? "Error: " + this.error : "")),
+                React.createElement("span", { style: { float: "right" } },
+                    React.createElement("span", null, "Examples: "),
+                    React.createElement("select", { onChange: this.onChangeExample.bind(this) }, predefs_1.predefs.map(function (predef) { return (React.createElement("option", { value: predef.name }, predef.name)); })))),
             React.createElement("div", { className: "panel panel-default config-panel" },
                 React.createElement("div", { className: "panel-body collapse in" },
                     React.createElement(react_monaco_editor_1.default, { height: 400, width: "100%", language: "typescript", value: this.result, options: {
@@ -69,6 +84,9 @@ var InputPanel = /** @class */ (function (_super) {
     __decorate([
         mobx_1.observable
     ], InputPanel.prototype, "error", void 0);
+    __decorate([
+        mobx_1.observable
+    ], InputPanel.prototype, "example", void 0);
     InputPanel = __decorate([
         mobx.observer
     ], InputPanel);
@@ -80,6 +98,30 @@ exports.InputPanel = InputPanel;
 /***/ }),
 
 /***/ 197:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Predef = /** @class */ (function () {
+    function Predef(name, code) {
+        this.name = name;
+        this.code = code;
+    }
+    return Predef;
+}());
+exports.Predef = Predef;
+var StackCode = new Predef("Stack", "\nvar elements = undefined\nreturn {\n    push: (e) => {\n        elements = {\n            next: elements,\n            item: e\n        }\n    },\n\n    pop: () => {\n        var result = elements.item\n        elements = elements.next\n        return result\n    }\n}\n");
+var StackInnerCode = new Predef("Stack with inner", "\nvar elements = undefined\nreturn {\n    push: (e) => {\n        elements = {\n            next: elements,\n            item: e\n        }\n    },\n\n    pop: () => {\n        var result = elements.item\n        elements = elements.next\n        return result\n    },\n\n    inner: () => {\n        return elements\n    }\n}\n");
+var IdentityCode = new Predef("Identity", "\nreturn (anything) => {\n    return anything\n}\n");
+var ObjectFilteringCode = new Predef("Object filtering", "\nvar a = { cond: true, prop: \"true\" }\nvar b = { cond: false, prop: \"false\" }\n\n// rand is a global variable that is either true or false\nif (rand) {\n  var x = a\n} else {\n  x = b\n}\n\n// here, x can be a or b\nvar cond = x.cond\nif (cond) {\n  // here, x can only be a\n  x.prop = \"haha\"\n}\n\nreturn x.prop\n");
+var FoldCode = new Predef("Fold", "\nreturn (folder, list, init) => {\n    // there are no lists :) and also no loop and no recursion (yet)\n    // so do it kinda manually\n    var acc = folder(init, list)\n    return folder(acc, list)\n}\n");
+exports.predefs = [StackCode, StackInnerCode, IdentityCode, ObjectFilteringCode, FoldCode];
+
+
+/***/ }),
+
+/***/ 198:
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {(function(){
@@ -50952,13 +50994,13 @@ $e.Inferium = $m_Lcom_github_srtobi_inferium_web_Api$();
 
 /***/ }),
 
-/***/ 207:
+/***/ 208:
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(208);
+var content = __webpack_require__(209);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -50984,7 +51026,7 @@ if(false) {
 
 /***/ }),
 
-/***/ 208:
+/***/ 209:
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(88)(false);
@@ -51019,9 +51061,9 @@ var React = __webpack_require__(20);
 var ReactDOM = __webpack_require__(58);
 var inputPanel_1 = __webpack_require__(191);
 __webpack_require__(87);
-__webpack_require__(198);
 __webpack_require__(199);
-__webpack_require__(207);
+__webpack_require__(200);
+__webpack_require__(208);
 var GUI = /** @class */ (function (_super) {
     __extends(GUI, _super);
     function GUI() {
@@ -51050,4 +51092,4 @@ document.body.appendChild(target);
 /***/ })
 
 },[91]);
-//# sourceMappingURL=main-babe14fd976b3f89f941.js.map
+//# sourceMappingURL=main-a76089225ada5dfce2ff.js.map
