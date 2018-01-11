@@ -113,10 +113,11 @@ var Predef = /** @class */ (function () {
 exports.Predef = Predef;
 var StackCode = new Predef("Stack", "\nvar elements = undefined\nreturn {\n    push: (e) => {\n        elements = {\n            next: elements,\n            item: e\n        }\n    },\n\n    pop: () => {\n        var result = elements.item\n        elements = elements.next\n        return result\n    }\n}\n");
 var StackInnerCode = new Predef("Stack with inner", "\nvar elements = undefined\nreturn {\n    push: (e) => {\n        elements = {\n            next: elements,\n            item: e\n        }\n    },\n\n    pop: () => {\n        var result = elements.item\n        elements = elements.next\n        return result\n    },\n\n    inner: () => {\n        return elements\n    }\n}\n");
+var StackInstantiationCode = new Predef("Stack instantiation", "\nvar createStack = () => {\n    var elements = undefined\n    return {\n        push: (e) => {\n            elements = {\n                next: elements,\n                item: e\n            }\n        },\n\n        pop: () => {\n            var result = elements.item\n            elements = elements.next\n            return result\n        },\n\n        top: () => {\n            return elements.item\n        }\n    }\n}\n\nvar stack = createStack()\nstack.push(3)\nstack.push(\"test\")\n\nvar result = {}\nresult.a = stack.pop()\nresult.b = stack.top()\nresult.c = stack.pop()\nreturn result\n");
 var IdentityCode = new Predef("Identity", "\nreturn (anything) => {\n    return anything\n}\n");
 var ObjectFilteringCode = new Predef("Object filtering", "\nvar a = { cond: true, prop: \"true\" }\nvar b = { cond: false, prop: \"false\" }\n\n// rand is a global variable that is either true or false\nif (rand) {\n  var x = a\n} else {\n  x = b\n}\n\n// here, x can be a or b\nvar cond = x.cond\nif (cond) {\n  // here, x can only be a\n  x.prop = \"haha\"\n}\n\nreturn x.prop\n");
 var FoldCode = new Predef("Fold", "\nreturn (folder, list, init) => {\n    // there are no lists :) and also no loop and no recursion (yet)\n    // so do it kinda manually\n    var acc = folder(init, list)\n    return folder(acc, list)\n}\n");
-exports.predefs = [StackCode, StackInnerCode, IdentityCode, ObjectFilteringCode, FoldCode];
+exports.predefs = [StackCode, StackInnerCode, StackInstantiationCode, IdentityCode, ObjectFilteringCode, FoldCode];
 
 
 /***/ }),
@@ -51092,4 +51093,4 @@ document.body.appendChild(target);
 /***/ })
 
 },[91]);
-//# sourceMappingURL=main-a76089225ada5dfce2ff.js.map
+//# sourceMappingURL=main-3e999a9a855a403f1e57.js.map
