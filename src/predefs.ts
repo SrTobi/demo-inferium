@@ -47,6 +47,40 @@ return {
 }
 `)
 
+const StackInstantiationCode = new Predef("Stack instantiation", `
+var createStack = () => {
+    var elements = undefined
+    return {
+        push: (e) => {
+            elements = {
+                next: elements,
+                item: e
+            }
+        },
+
+        pop: () => {
+            var result = elements.item
+            elements = elements.next
+            return result
+        },
+
+        top: () => {
+            return elements.item
+        }
+    }
+}
+
+var stack = createStack()
+stack.push(3)
+stack.push("test")
+
+var result = {}
+result.a = stack.pop()
+result.b = stack.top()
+result.c = stack.pop()
+return result
+`)
+
 const IdentityCode = new Predef("Identity", `
 return (anything) => {
     return anything
@@ -84,4 +118,4 @@ return (folder, list, init) => {
 }
 `)
 
-export const predefs: Predef[] = [StackCode, StackInnerCode, IdentityCode, ObjectFilteringCode, FoldCode]
+export const predefs: Predef[] = [StackCode, StackInnerCode, StackInstantiationCode, IdentityCode, ObjectFilteringCode, FoldCode]
