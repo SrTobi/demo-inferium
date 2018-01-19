@@ -70,7 +70,7 @@ export class InputPanel extends React.Component<{}, {}> {
                     </div>
                 </div>
                 <div style={{textAlign: "center"}}>
-                    Be careful... recursion does not work at the moment... this is an alpha version after all 
+                    Recursion works... mostly :D ... this is an alpha version after all 
                 </div>
                 <div className="panel panel-default config-panel">
                     <span>

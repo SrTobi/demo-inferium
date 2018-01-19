@@ -109,13 +109,28 @@ if (cond) {
 return x.prop
 `)
 
-const FoldCode = new Predef("Fold", `
-return (folder, list, init) => {
-    // there are no lists :) and also no loop and no recursion (yet)
-    // so do it kinda manually
-    var acc = folder(init, list)
-    return folder(acc, list)
-}
+const SimpleRecursion = new Predef("Simple Recursion", `
+
 `)
 
-export const predefs: Predef[] = [StackCode, StackInnerCode, StackInstantiationCode, IdentityCode, ObjectFilteringCode, FoldCode]
+const FoldCode = new Predef("Fold", `
+var fold = (folder, it, init) => {
+    if (it.hasNext()) {
+        return fold(folder, it, folder(it.next(), init))
+    } else {
+        return init
+    }
+}
+
+return fold
+`)
+
+const EndlessRecursion = new Predef("Endless recursion", `
+var f = () => {
+    return f()
+}
+
+return f
+`)
+
+export const predefs: Predef[] = [StackCode, StackInnerCode, StackInstantiationCode, IdentityCode, ObjectFilteringCode, FoldCode, EndlessRecursion]
