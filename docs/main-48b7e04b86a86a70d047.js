@@ -59,7 +59,7 @@ var InputPanel = /** @class */ (function (_super) {
             React.createElement("div", { className: "panel panel-default config-panel" },
                 React.createElement("div", { className: "panel-body collapse in" },
                     React.createElement(react_monaco_editor_1.default, { height: 400, width: "100%", language: "javascript", value: this.code, onChange: function (code) { return _this.code = code; } }))),
-            React.createElement("div", { style: { textAlign: "center" } }, "Be careful... recursion does not work at the moment... this is an alpha version after all"),
+            React.createElement("div", { style: { textAlign: "center" } }, "Recursion works... mostly :D ... this is an alpha version after all"),
             React.createElement("div", { className: "panel panel-default config-panel" },
                 React.createElement("span", null,
                     React.createElement("button", { type: "button", onClick: function () { return _this.infer(_this.code); } }, "Infer"),
@@ -116,8 +116,10 @@ var StackInnerCode = new Predef("Stack with inner", "\nvar elements = undefined\
 var StackInstantiationCode = new Predef("Stack instantiation", "\nvar createStack = () => {\n    var elements = undefined\n    return {\n        push: (e) => {\n            elements = {\n                next: elements,\n                item: e\n            }\n        },\n\n        pop: () => {\n            var result = elements.item\n            elements = elements.next\n            return result\n        },\n\n        top: () => {\n            return elements.item\n        }\n    }\n}\n\nvar stack = createStack()\nstack.push(3)\nstack.push(\"test\")\n\nvar result = {}\nresult.a = stack.pop()\nresult.b = stack.top()\nresult.c = stack.pop()\nreturn result\n");
 var IdentityCode = new Predef("Identity", "\nreturn (anything) => {\n    return anything\n}\n");
 var ObjectFilteringCode = new Predef("Object filtering", "\nvar a = { cond: true, prop: \"true\" }\nvar b = { cond: false, prop: \"false\" }\n\n// rand is a global variable that is either true or false\nif (rand) {\n  var x = a\n} else {\n  x = b\n}\n\n// here, x can be a or b\nvar cond = x.cond\nif (cond) {\n  // here, x can only be a\n  x.prop = \"haha\"\n}\n\nreturn x.prop\n");
-var FoldCode = new Predef("Fold", "\nreturn (folder, list, init) => {\n    // there are no lists :) and also no loop and no recursion (yet)\n    // so do it kinda manually\n    var acc = folder(init, list)\n    return folder(acc, list)\n}\n");
-exports.predefs = [StackCode, StackInnerCode, StackInstantiationCode, IdentityCode, ObjectFilteringCode, FoldCode];
+var SimpleRecursion = new Predef("Simple Recursion", "\n\n");
+var FoldCode = new Predef("Fold", "\nvar fold = (folder, it, init) => {\n    if (it.hasNext()) {\n        return fold(folder, it, folder(it.next(), init))\n    } else {\n        return init\n    }\n}\n\nreturn fold\n");
+var EndlessRecursion = new Predef("Endless recursion", "\nvar f = () => {\n    return f()\n}\n\nreturn f\n");
+exports.predefs = [StackCode, StackInnerCode, StackInstantiationCode, IdentityCode, ObjectFilteringCode, FoldCode, EndlessRecursion];
 
 
 /***/ }),
@@ -4280,12 +4282,12 @@ $c_Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory$Unifier.proto
   var objSet = this.mergeObjectSets__p1__sc_Set__sc_Set__sc_Set(this.objects$1.keySet__sc_Set(), other.objects$1.keySet__sc_Set());
   var result = $as_scm_Map($m_scm_Map$().apply__sc_Seq__sc_GenMap($m_sci_Nil$()));
   objSet.foreach__F1__V(new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function($this, a, b, result$1) {
-    return (function(x0$3$2) {
-      var x0$3 = $as_T3(x0$3$2);
-      if ((x0$3 !== null)) {
-        var obj = $as_Lcom_github_srtobi_inferium_prototype_flow_ObjectValue(x0$3.$$und1$1);
-        var aObj = $as_Lcom_github_srtobi_inferium_prototype_flow_ObjectValue(x0$3.$$und2$1);
-        var bObj = $as_Lcom_github_srtobi_inferium_prototype_flow_ObjectValue(x0$3.$$und3$1);
+    return (function(x0$6$2) {
+      var x0$6 = $as_T3(x0$6$2);
+      if ((x0$6 !== null)) {
+        var obj = $as_Lcom_github_srtobi_inferium_prototype_flow_ObjectValue(x0$6.$$und1$1);
+        var aObj = $as_Lcom_github_srtobi_inferium_prototype_flow_ObjectValue(x0$6.$$und2$1);
+        var bObj = $as_Lcom_github_srtobi_inferium_prototype_flow_ObjectValue(x0$6.$$und3$1);
         var hash = $m_sr_Statics$().anyHash__O__I(obj);
         var i = $f_scm_HashTable__index__I__I(result$1, hash);
         var entry = result$1.findEntry__p5__O__I__scm_DefaultEntry(obj, i);
@@ -4329,7 +4331,7 @@ $c_Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory$Unifier.proto
         var this$3 = aProps.keySet__sc_Set();
         var that = bProps.keySet__sc_Set();
         var props = $as_sc_Set(this$3.union__sc_GenSet__O(that));
-        props.foreach__F1__V(new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function(this$4, a$1, b$1, aObj$1, bObj$1, resultProps$1, aProps$1, bProps$1) {
+        props.foreach__F1__V(new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function(this$4, a$1, b$2, aObj$1, bObj$1, resultProps$1, aProps$1, bProps$1) {
           return (function(prop$2) {
             var prop = $as_T(prop$2);
             var aDefault$lzy = new $c_sr_LazyRef().init___();
@@ -4351,7 +4353,7 @@ $c_Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory$Unifier.proto
               var x$19 = $as_T2(arg1$1);
               var this$8 = new $c_s_Some().init___O($as_Lcom_github_srtobi_inferium_prototype_flow_ValueLike(x$19.$$und2__O()))
             };
-            var bVal = $as_Lcom_github_srtobi_inferium_prototype_flow_ValueLike((this$8.isEmpty__Z() ? this$4.bDefault$1__p1__Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory$Unifier__Lcom_github_srtobi_inferium_prototype_flow_ObjectValue__T__sr_LazyRef__Lcom_github_srtobi_inferium_prototype_flow_ValueLike(b$1, bObj$1, prop, bDefault$lzy) : this$8.get__O()));
+            var bVal = $as_Lcom_github_srtobi_inferium_prototype_flow_ValueLike((this$8.isEmpty__Z() ? this$4.bDefault$1__p1__Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory$Unifier__Lcom_github_srtobi_inferium_prototype_flow_ObjectValue__T__sr_LazyRef__Lcom_github_srtobi_inferium_prototype_flow_ValueLike(b$2, bObj$1, prop, bDefault$lzy) : this$8.get__O()));
             var y = new $c_T2().init___O__O(0, $m_Lcom_github_srtobi_inferium_prototype_flow_UnionValue$().apply__sc_Seq__Lcom_github_srtobi_inferium_prototype_flow_ValueLike(new $c_sjs_js_WrappedArray().init___sjs_js_Array([aVal, bVal])));
             var e = $as_scm_DefaultEntry($f_scm_HashTable__findOrAddEntry__O__O__scm_HashEntry(resultProps$1, prop, y));
             if ((e !== null)) {
@@ -4361,7 +4363,7 @@ $c_Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory$Unifier.proto
           })
         })($this, a, b, aObj, bObj, resultProps, aProps, bProps)))
       } else {
-        throw new $c_s_MatchError().init___O(x0$3)
+        throw new $c_s_MatchError().init___O(x0$6)
       }
     })
   })(this, this, other, result)));
@@ -4377,14 +4379,14 @@ $c_Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory$Unifier.proto
   this.memory$1 = $as_Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory(iniMemory.prev$2.get__O());
   var this$2 = iniMemory.com$github$srtobi$inferium$prototype$flow$IterationHeap$Memory$$objects$2;
   var f = new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function($this) {
-    return (function(x0$2$2) {
-      var x0$2 = $as_T2(x0$2$2);
-      if ((x0$2 !== null)) {
-        var obj = $as_Lcom_github_srtobi_inferium_prototype_flow_ObjectValue(x0$2.$$und1__O());
-        var value = $as_scm_Map(x0$2.$$und2__O());
+    return (function(x0$5$2) {
+      var x0$5 = $as_T2(x0$5$2);
+      if ((x0$5 !== null)) {
+        var obj = $as_Lcom_github_srtobi_inferium_prototype_flow_ObjectValue(x0$5.$$und1__O());
+        var value = $as_scm_Map(x0$5.$$und2__O());
         return new $c_T2().init___O__O(obj, $as_scm_Map($as_scg_Growable(value.empty__sc_Map()).$$plus$plus$eq__sc_TraversableOnce__scg_Growable(value)))
       } else {
-        throw new $c_s_MatchError().init___O(x0$2)
+        throw new $c_s_MatchError().init___O(x0$5)
       }
     })
   })(this));
@@ -4392,6 +4394,9 @@ $c_Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory$Unifier.proto
   var bf = new $c_scg_GenMapFactory$MapCanBuildFrom().init___scg_GenMapFactory(this$1);
   this.objects$1 = $as_scm_Map($f_sc_TraversableLike__map__F1__scg_CanBuildFrom__O(this$2, f, bf));
   return this
+});
+$c_Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory$Unifier.prototype.canUp__Z = (function() {
+  return this.memory$1.prev$2.isDefined__Z()
 });
 $c_Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory$Unifier.prototype.up__V = (function() {
   var jsx$1 = $m_s_Predef$();
@@ -4425,14 +4430,14 @@ $c_Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory$Unifier.proto
 $c_Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory$Unifier.prototype.aDefault$1__p1__Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory$Unifier__Lcom_github_srtobi_inferium_prototype_flow_ObjectValue__T__sr_LazyRef__Lcom_github_srtobi_inferium_prototype_flow_ValueLike = (function(a$1, aObj$1, prop$1, aDefault$lzy$1) {
   return (aDefault$lzy$1.$$undinitialized$1 ? $as_Lcom_github_srtobi_inferium_prototype_flow_ValueLike(aDefault$lzy$1.$$undvalue$1) : this.aDefault$lzycompute$1__p1__Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory$Unifier__Lcom_github_srtobi_inferium_prototype_flow_ObjectValue__T__sr_LazyRef__Lcom_github_srtobi_inferium_prototype_flow_ValueLike(a$1, aObj$1, prop$1, aDefault$lzy$1))
 });
-$c_Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory$Unifier.prototype.bDefault$lzycompute$1__p1__Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory$Unifier__Lcom_github_srtobi_inferium_prototype_flow_ObjectValue__T__sr_LazyRef__Lcom_github_srtobi_inferium_prototype_flow_ValueLike = (function(b$1, bObj$1, prop$1, bDefault$lzy$1) {
+$c_Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory$Unifier.prototype.bDefault$lzycompute$1__p1__Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory$Unifier__Lcom_github_srtobi_inferium_prototype_flow_ObjectValue__T__sr_LazyRef__Lcom_github_srtobi_inferium_prototype_flow_ValueLike = (function(b$2, bObj$1, prop$1, bDefault$lzy$1) {
   if ((bDefault$lzy$1 === null)) {
     throw new $c_jl_NullPointerException().init___()
   };
-  return (bDefault$lzy$1.$$undinitialized$1 ? $as_Lcom_github_srtobi_inferium_prototype_flow_ValueLike(bDefault$lzy$1.$$undvalue$1) : $as_Lcom_github_srtobi_inferium_prototype_flow_ValueLike(bDefault$lzy$1.initialize__O__O(b$1.memory$1.readProperty__Lcom_github_srtobi_inferium_prototype_flow_ValueLike__T__Z__Lcom_github_srtobi_inferium_prototype_flow_ValueLike(bObj$1, prop$1, false))))
+  return (bDefault$lzy$1.$$undinitialized$1 ? $as_Lcom_github_srtobi_inferium_prototype_flow_ValueLike(bDefault$lzy$1.$$undvalue$1) : $as_Lcom_github_srtobi_inferium_prototype_flow_ValueLike(bDefault$lzy$1.initialize__O__O(b$2.memory$1.readProperty__Lcom_github_srtobi_inferium_prototype_flow_ValueLike__T__Z__Lcom_github_srtobi_inferium_prototype_flow_ValueLike(bObj$1, prop$1, false))))
 });
-$c_Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory$Unifier.prototype.bDefault$1__p1__Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory$Unifier__Lcom_github_srtobi_inferium_prototype_flow_ObjectValue__T__sr_LazyRef__Lcom_github_srtobi_inferium_prototype_flow_ValueLike = (function(b$1, bObj$1, prop$1, bDefault$lzy$1) {
-  return (bDefault$lzy$1.$$undinitialized$1 ? $as_Lcom_github_srtobi_inferium_prototype_flow_ValueLike(bDefault$lzy$1.$$undvalue$1) : this.bDefault$lzycompute$1__p1__Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory$Unifier__Lcom_github_srtobi_inferium_prototype_flow_ObjectValue__T__sr_LazyRef__Lcom_github_srtobi_inferium_prototype_flow_ValueLike(b$1, bObj$1, prop$1, bDefault$lzy$1))
+$c_Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory$Unifier.prototype.bDefault$1__p1__Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory$Unifier__Lcom_github_srtobi_inferium_prototype_flow_ObjectValue__T__sr_LazyRef__Lcom_github_srtobi_inferium_prototype_flow_ValueLike = (function(b$2, bObj$1, prop$1, bDefault$lzy$1) {
+  return (bDefault$lzy$1.$$undinitialized$1 ? $as_Lcom_github_srtobi_inferium_prototype_flow_ValueLike(bDefault$lzy$1.$$undvalue$1) : this.bDefault$lzycompute$1__p1__Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory$Unifier__Lcom_github_srtobi_inferium_prototype_flow_ObjectValue__T__sr_LazyRef__Lcom_github_srtobi_inferium_prototype_flow_ValueLike(b$2, bObj$1, prop$1, bDefault$lzy$1))
 });
 $c_Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory$Unifier.prototype.mergeObjectSets__p1__sc_Set__sc_Set__sc_Set = (function(a, b) {
   $m_scm_Buffer$();
@@ -4567,6 +4572,8 @@ function $c_Lcom_github_srtobi_inferium_prototype_flow_TemplateBuilder() {
   $c_O.call(this);
   this.body$1 = null;
   this.parameter$1 = null;
+  this.callStack$1 = null;
+  this.innerFunctionDefinitions$1 = null;
   this.com$github$srtobi$inferium$prototype$flow$TemplateBuilder$$endNode$f = null;
   this.flowAnalysis$1 = null;
   this.done$1 = false;
@@ -4769,25 +4776,34 @@ $c_Lcom_github_srtobi_inferium_prototype_flow_TemplateBuilder.prototype.buildExp
     })(this, newnode));
     var this$3 = $m_sc_Seq$();
     var argValues = $as_sc_Seq(args.map__F1__scg_CanBuildFrom__O(jsx$1, this$3.ReusableCBFInstance$2));
-    var node$7 = $as_Lcom_github_srtobi_inferium_prototype_flow_Nodes$FunctionCall(newnode.apply__Lcom_github_srtobi_inferium_prototype_flow_Nodes$Node__Lcom_github_srtobi_inferium_prototype_flow_Nodes$Node(new $c_Lcom_github_srtobi_inferium_prototype_flow_Nodes$FunctionCall().init___Lcom_github_srtobi_inferium_prototype_flow_ValueSource__sc_Seq__Lcom_github_srtobi_inferium_prototype_flow_FlowAnalysis(new $c_Lcom_github_srtobi_inferium_prototype_flow_ValueSink$$anon$1().init___Lcom_github_srtobi_inferium_prototype_flow_ValueSink(funcValue), argValues, this.flowAnalysis$1)));
+    var node$7 = $as_Lcom_github_srtobi_inferium_prototype_flow_Nodes$FunctionCall(newnode.apply__Lcom_github_srtobi_inferium_prototype_flow_Nodes$Node__Lcom_github_srtobi_inferium_prototype_flow_Nodes$Node(new $c_Lcom_github_srtobi_inferium_prototype_flow_Nodes$FunctionCall().init___Lcom_github_srtobi_inferium_prototype_flow_ValueSource__sc_Seq__sci_Map__Lcom_github_srtobi_inferium_prototype_flow_FlowAnalysis(new $c_Lcom_github_srtobi_inferium_prototype_flow_ValueSink$$anon$1().init___Lcom_github_srtobi_inferium_prototype_flow_ValueSink(funcValue), argValues, this.callStack$1, this.flowAnalysis$1)));
     return node$7.com$github$srtobi$inferium$prototype$flow$Nodes$FunctionCall$$$undresult$2
   };
   if ($is_Lcom_github_srtobi_inferium_prototype_Ast$Function(expr)) {
     var x16 = $as_Lcom_github_srtobi_inferium_prototype_Ast$Function(expr);
-    var templ = new $c_Lcom_github_srtobi_inferium_prototype_flow_TemplateBuilder$FunctionTemplate().init___Lcom_github_srtobi_inferium_prototype_Ast$Function__Lcom_github_srtobi_inferium_prototype_flow_Templates$Closure__Lcom_github_srtobi_inferium_prototype_flow_FlowAnalysis(x16, this.closure$1, this.flowAnalysis$1);
+    var this$4 = this.innerFunctionDefinitions$1;
+    var hash = $m_sr_Statics$().anyHash__O__I(x16);
+    var i = $f_scm_HashTable__index__I__I(this$4, hash);
+    var entry = this$4.findEntry__p5__O__I__scm_DefaultEntry(x16, i);
+    if ((entry !== null)) {
+      var jsx$2 = entry.value$1
+    } else {
+      var table0 = this$4.table$5;
+      var $default = new $c_Lcom_github_srtobi_inferium_prototype_flow_TemplateBuilder$FunctionTemplate().init___Lcom_github_srtobi_inferium_prototype_Ast$Function__Lcom_github_srtobi_inferium_prototype_flow_Templates$Closure__Lcom_github_srtobi_inferium_prototype_flow_FlowAnalysis(x16, this.closure$1, this.flowAnalysis$1);
+      var newEntryIndex = ((table0 === this$4.table$5) ? i : $f_scm_HashTable__index__I__I(this$4, hash));
+      var jsx$2 = this$4.addEntry__p5__scm_DefaultEntry__I__O(new $c_scm_DefaultEntry().init___O__O(x16, $default), newEntryIndex)
+    };
+    var templ = $as_Lcom_github_srtobi_inferium_prototype_flow_TemplateBuilder$FunctionTemplate(jsx$2);
     var node$8 = $as_Lcom_github_srtobi_inferium_prototype_flow_Nodes$Literal(newnode.apply__Lcom_github_srtobi_inferium_prototype_flow_Nodes$Node__Lcom_github_srtobi_inferium_prototype_flow_Nodes$Node(new $c_Lcom_github_srtobi_inferium_prototype_flow_Nodes$Literal().init___Lcom_github_srtobi_inferium_prototype_flow_ValueLike__Lcom_github_srtobi_inferium_prototype_flow_FlowAnalysis(new $c_Lcom_github_srtobi_inferium_prototype_flow_FunctionValue().init___Lcom_github_srtobi_inferium_prototype_flow_Templates$Function__sc_Seq(templ, this.closureValues$1), this.flowAnalysis$1)));
     return node$8.$$undresult$2
   };
   throw new $c_s_MatchError().init___O(expr)
 });
-$c_Lcom_github_srtobi_inferium_prototype_flow_TemplateBuilder.prototype.wrapValue__p1__Lcom_github_srtobi_inferium_prototype_flow_ValueLike__Lcom_github_srtobi_inferium_prototype_flow_ValueSourceProvider = (function(value) {
-  var sink = new $c_Lcom_github_srtobi_inferium_prototype_flow_ValueSink().init___();
-  sink.set__Lcom_github_srtobi_inferium_prototype_flow_ValueLike__V(value);
-  return sink
-});
-$c_Lcom_github_srtobi_inferium_prototype_flow_TemplateBuilder.prototype.init___sc_Seq__sc_Seq__sc_Seq__s_Option__Lcom_github_srtobi_inferium_prototype_flow_Nodes$Node__Lcom_github_srtobi_inferium_prototype_flow_FlowAnalysis = (function(body, outerClosureValues, parameter, outerClosure, endNode, flowAnalysis) {
+$c_Lcom_github_srtobi_inferium_prototype_flow_TemplateBuilder.prototype.init___sc_Seq__sc_Seq__sc_Seq__s_Option__sci_Map__scm_Map__Lcom_github_srtobi_inferium_prototype_flow_Nodes$Node__Lcom_github_srtobi_inferium_prototype_flow_FlowAnalysis = (function(body, outerClosureValues, parameter, outerClosure, callStack, innerFunctionDefinitions, endNode, flowAnalysis) {
   this.body$1 = body;
   this.parameter$1 = parameter;
+  this.callStack$1 = callStack;
+  this.innerFunctionDefinitions$1 = innerFunctionDefinitions;
   this.com$github$srtobi$inferium$prototype$flow$TemplateBuilder$$endNode$f = endNode;
   this.flowAnalysis$1 = flowAnalysis;
   this.done$1 = false;
@@ -4800,6 +4816,11 @@ $c_Lcom_github_srtobi_inferium_prototype_flow_TemplateBuilder.prototype.init___s
   this.returns$1 = this$5;
   this.closure$1 = new $c_Lcom_github_srtobi_inferium_prototype_flow_TemplateBuilder$Closure().init___s_Option(outerClosure);
   return this
+});
+$c_Lcom_github_srtobi_inferium_prototype_flow_TemplateBuilder.prototype.wrapValue__p1__Lcom_github_srtobi_inferium_prototype_flow_ValueLike__Lcom_github_srtobi_inferium_prototype_flow_ValueSourceProvider = (function(value) {
+  var sink = new $c_Lcom_github_srtobi_inferium_prototype_flow_ValueSink().init___();
+  sink.set__Lcom_github_srtobi_inferium_prototype_flow_ValueLike__V(value);
+  return sink
 });
 $c_Lcom_github_srtobi_inferium_prototype_flow_TemplateBuilder.prototype.hoistVars__p1__sc_Seq__V = (function(stmts) {
   stmts.foreach__F1__V(new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function($this) {
@@ -5077,6 +5098,10 @@ $c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter.prototype.com$gi
     return $as_sc_TraversableOnce(jsx$2.map__F1__scg_CanBuildFrom__O(jsx$1, this$5.ReusableCBFInstance$2)).mkString__T__T__T__T("<", ", ", ">")
   }
 });
+$c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter.prototype.com$github$srtobi$inferium$prototype$flow$TypeScriptPrinter$$addLine__T__V = (function(line) {
+  this.com$github$srtobi$inferium$prototype$flow$TypeScriptPrinter$$builder$1.append__T__scm_StringBuilder(line);
+  this.com$github$srtobi$inferium$prototype$flow$TypeScriptPrinter$$builder$1.append__T__scm_StringBuilder("\n")
+});
 $c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter.prototype.com$github$srtobi$inferium$prototype$flow$TypeScriptPrinter$$join__sc_Seq__sc_Set = (function(sets) {
   return $as_sc_Set(sets.foldLeft__O__F2__O($m_sc_Set$().apply__sc_Seq__sc_GenTraversable($m_sci_Nil$()), new $c_sjsr_AnonFunction2().init___sjs_js_Function2((function($this) {
     return (function(x$1$2, x$2$2) {
@@ -5085,6 +5110,20 @@ $c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter.prototype.com$gi
       return $as_sc_Set(x$1.union__sc_GenSet__O(x$2))
     })
   })(this))))
+});
+$c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter.prototype.com$github$srtobi$inferium$prototype$flow$TypeScriptPrinter$$buildGenericDef__sc_Set__sc_Set__T = (function(hereGenerics, outerGenerics) {
+  var this$1 = hereGenerics.toSeq__sc_Seq();
+  var ord = $m_s_math_Ordering$String$();
+  var jsx$2 = $as_sc_TraversableLike($f_sc_SeqLike__sorted__s_math_Ordering__O(this$1, ord));
+  var jsx$1 = new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function($this, outerGenerics$1) {
+    return (function(g$2) {
+      var g = $as_T(g$2);
+      return (outerGenerics$1.contains__O__Z(g) ? g : "any")
+    })
+  })(this, outerGenerics));
+  var this$2 = $m_sc_Seq$();
+  var gens = $as_sc_Seq(jsx$2.map__F1__scg_CanBuildFrom__O(jsx$1, this$2.ReusableCBFInstance$2));
+  return (gens.nonEmpty__Z() ? gens.mkString__T__T__T__T("<", ", ", ">") : "")
 });
 $c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter.prototype.init___Lcom_github_srtobi_inferium_prototype_flow_Heap$IniEntity__Lcom_github_srtobi_inferium_prototype_flow_Heap$IniEntity = (function(returnObject, globalObject) {
   this.returnObject$1 = returnObject;
@@ -5095,7 +5134,7 @@ $c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter.prototype.init__
   this.com$github$srtobi$inferium$prototype$flow$TypeScriptPrinter$$genericExtends$1 = new $c_scm_HashMap().init___();
   this.com$github$srtobi$inferium$prototype$flow$TypeScriptPrinter$$argNames$1 = $m_sjsr_RuntimeString$().split__T__T__I__AT("abcdefghijklmnopqrstuvwxyz", "", 0);
   var exportEntry = this.makeEntry__p1__Lcom_github_srtobi_inferium_prototype_flow_Heap$IniEntity__Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$Entry(returnObject);
-  this.addLine__p1__T__V(exportEntry.printAsExport__T());
+  this.com$github$srtobi$inferium$prototype$flow$TypeScriptPrinter$$addLine__T__V(exportEntry.printAsExport__T());
   var this$4 = this.com$github$srtobi$inferium$prototype$flow$TypeScriptPrinter$$builder$1;
   this.result$1 = this$4.underlying$5.java$lang$StringBuilder$$content$f;
   return this
@@ -5204,10 +5243,6 @@ $c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter.prototype.com$gi
     }
   };
   return new $c_scm_HashMap$$anon$1().init___scm_HashMap(b)
-});
-$c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter.prototype.addLine__p1__T__V = (function(line) {
-  this.com$github$srtobi$inferium$prototype$flow$TypeScriptPrinter$$builder$1.append__T__scm_StringBuilder(line);
-  this.com$github$srtobi$inferium$prototype$flow$TypeScriptPrinter$$builder$1.append__T__scm_StringBuilder("\n")
 });
 var $d_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter = new $TypeData().initClass({
   Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter: 0
@@ -9998,7 +10033,7 @@ function $c_Lcom_github_srtobi_inferium_prototype_flow_ForwardFlowAnalysis() {
   this.globalObject$1 = null;
   this.com$github$srtobi$inferium$prototype$flow$ForwardFlowAnalysis$$nodesToPropagate$1 = null;
   this.knownFunctions$1 = null;
-  this.knownObjects$1 = null
+  this.com$github$srtobi$inferium$prototype$flow$ForwardFlowAnalysis$$knownObjects$1 = null
 }
 $c_Lcom_github_srtobi_inferium_prototype_flow_ForwardFlowAnalysis.prototype = new $h_O();
 $c_Lcom_github_srtobi_inferium_prototype_flow_ForwardFlowAnalysis.prototype.constructor = $c_Lcom_github_srtobi_inferium_prototype_flow_ForwardFlowAnalysis;
@@ -10066,9 +10101,9 @@ $c_Lcom_github_srtobi_inferium_prototype_flow_ForwardFlowAnalysis.prototype.anal
   var resultingHeap = endNode.resultingHeap$2;
   var jsx$2 = $m_Lcom_github_srtobi_inferium_prototype_flow_UnionValue$();
   var jsx$1 = new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function($this) {
-    return (function(x$4$2) {
-      var x$4 = $as_Lcom_github_srtobi_inferium_prototype_flow_ValueSourceProvider(x$4$2);
-      return new $c_Lcom_github_srtobi_inferium_prototype_flow_ValueSink$$anon$1().init___Lcom_github_srtobi_inferium_prototype_flow_ValueSink(x$4).get__Lcom_github_srtobi_inferium_prototype_flow_ValueLike()
+    return (function(x$5$2) {
+      var x$5 = $as_Lcom_github_srtobi_inferium_prototype_flow_ValueSourceProvider(x$5$2);
+      return new $c_Lcom_github_srtobi_inferium_prototype_flow_ValueSink$$anon$1().init___Lcom_github_srtobi_inferium_prototype_flow_ValueSink(x$5).get__Lcom_github_srtobi_inferium_prototype_flow_ValueLike()
     })
   })(this));
   var this$5 = $m_sc_Seq$();
@@ -10077,8 +10112,8 @@ $c_Lcom_github_srtobi_inferium_prototype_flow_ForwardFlowAnalysis.prototype.anal
     var this$6 = $m_s_None$()
   } else {
     var arg1 = resultingHeap.get__O();
-    var x$5 = $as_Lcom_github_srtobi_inferium_prototype_flow_HeapMemory(arg1);
-    var this$6 = new $c_s_Some().init___O($as_Lcom_github_srtobi_inferium_prototype_flow_HeapMemory(this.garbageCollect__p1__Lcom_github_srtobi_inferium_prototype_flow_HeapMemory__Lcom_github_srtobi_inferium_prototype_flow_HeapMemory__Lcom_github_srtobi_inferium_prototype_flow_ValueLike__T2(emptyHeap, x$5, this.$$undscriptReturnValue$1).$$und1__O()))
+    var x$6 = $as_Lcom_github_srtobi_inferium_prototype_flow_HeapMemory(arg1);
+    var this$6 = new $c_s_Some().init___O($as_Lcom_github_srtobi_inferium_prototype_flow_HeapMemory(this.garbageCollect__p1__Lcom_github_srtobi_inferium_prototype_flow_HeapMemory__Lcom_github_srtobi_inferium_prototype_flow_HeapMemory__Lcom_github_srtobi_inferium_prototype_flow_ValueLike__T2(emptyHeap, x$6, this.$$undscriptReturnValue$1).$$und1__O()))
   };
   this.globalHeapState$1 = $as_Lcom_github_srtobi_inferium_prototype_flow_HeapMemory((this$6.isEmpty__Z() ? this.globalHeapState$1 : this$6.get__O()))
 });
@@ -10093,12 +10128,14 @@ $c_Lcom_github_srtobi_inferium_prototype_flow_ForwardFlowAnalysis.prototype.add$
     })(this, queue$1)))
   } else if ($is_Lcom_github_srtobi_inferium_prototype_flow_ObjectValue(value)) {
     var x3 = $as_Lcom_github_srtobi_inferium_prototype_flow_ObjectValue(value);
+    var this$1 = this.com$github$srtobi$inferium$prototype$flow$ForwardFlowAnalysis$$knownObjects$1;
+    this$1.$$plus$eq__O__scm_HashSet(x3);
     if ($is_Lcom_github_srtobi_inferium_prototype_flow_FunctionValue(x3)) {
       var x2$2 = $as_Lcom_github_srtobi_inferium_prototype_flow_FunctionValue(x3);
       if ((!this.knownFunctions$1.contains__O__Z(x2$2))) {
-        var this$3 = this.knownFunctions$1;
+        var this$4 = this.knownFunctions$1;
         var y = new $c_Lcom_github_srtobi_inferium_prototype_flow_ForwardFlowAnalysis$CallContext().init___Lcom_github_srtobi_inferium_prototype_flow_ForwardFlowAnalysis__Lcom_github_srtobi_inferium_prototype_flow_FunctionValue(this, x2$2);
-        var e = $as_scm_DefaultEntry($f_scm_HashTable__findOrAddEntry__O__O__scm_HashEntry(this$3, x2$2, y));
+        var e = $as_scm_DefaultEntry($f_scm_HashTable__findOrAddEntry__O__O__scm_HashEntry(this$4, x2$2, y));
         if ((e !== null)) {
           e.value$1 = y
         }
@@ -10110,23 +10147,42 @@ $c_Lcom_github_srtobi_inferium_prototype_flow_ForwardFlowAnalysis.prototype.add$
           return x$2.asValue__Lcom_github_srtobi_inferium_prototype_flow_Value()
         })
       })(this));
-      var this$4 = $m_sc_Seq$();
-      $as_sc_IterableLike(jsx$2.map__F1__scg_CanBuildFrom__O(jsx$1, this$4.ReusableCBFInstance$2)).foreach__F1__V(new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function(this$3$1, queue$1$2) {
+      var this$5 = $m_sc_Seq$();
+      $as_sc_IterableLike(jsx$2.map__F1__scg_CanBuildFrom__O(jsx$1, this$5.ReusableCBFInstance$2)).foreach__F1__V(new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function(this$3$1, queue$1$2) {
         return (function(value$3$2) {
           var value$3 = $as_Lcom_github_srtobi_inferium_prototype_flow_Value(value$3$2);
           this$3$1.add$1__p1__Lcom_github_srtobi_inferium_prototype_flow_Value__scm_Queue__V(value$3, queue$1$2)
         })
       })(this, queue$1)))
+    } else if ($is_Lcom_github_srtobi_inferium_prototype_flow_UserValue(x3)) {
+      var x3$2 = $as_Lcom_github_srtobi_inferium_prototype_flow_UserValue(x3);
+      var this$6 = x3$2.$$undfunctionInfoOption$5;
+      if ((!this$6.isEmpty__Z())) {
+        var arg1 = this$6.get__O();
+        var info = $as_Lcom_github_srtobi_inferium_prototype_flow_UserValueFunctionInfo(arg1);
+        var jsx$4 = info.$$undparameter$1;
+        var jsx$3 = new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function($this$1) {
+          return (function(x$3$2) {
+            var x$3 = $as_Lcom_github_srtobi_inferium_prototype_flow_ValueLike(x$3$2);
+            return x$3.normalized__Lcom_github_srtobi_inferium_prototype_flow_Value()
+          })
+        })(this));
+        var this$7 = $m_sc_Seq$();
+        $as_sc_IterableLike(jsx$4.map__F1__scg_CanBuildFrom__O(jsx$3, this$7.ReusableCBFInstance$2)).foreach__F1__V(new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function(this$2$2, queue$1$3) {
+          return (function(value$2$1) {
+            var value$1 = $as_Lcom_github_srtobi_inferium_prototype_flow_Value(value$2$1);
+            this$2$2.add$1__p1__Lcom_github_srtobi_inferium_prototype_flow_Value__scm_Queue__V(value$1, queue$1$3)
+          })
+        })(this, queue$1)))
+      }
     };
-    var this$5 = this.knownObjects$1;
-    this$5.$$plus$eq__O__scm_HashSet(x3);
     var array = [x3];
     var i = 0;
     var len = $uI(array.length);
     while ((i < len)) {
       var index = i;
-      var arg1 = array[index];
-      queue$1.$$plus$eq__O__scm_MutableList(arg1);
+      var arg1$1 = array[index];
+      queue$1.$$plus$eq__O__scm_MutableList(arg1$1);
       i = ((1 + i) | 0)
     }
   }
@@ -10139,7 +10195,7 @@ $c_Lcom_github_srtobi_inferium_prototype_flow_ForwardFlowAnalysis.prototype.garb
   var elem$1 = false;
   elem$1 = false;
   queue.$$plus$eq__O__scm_MutableList(this.globalObject$1);
-  var xs = this.knownObjects$1;
+  var xs = this.com$github$srtobi$inferium$prototype$flow$ForwardFlowAnalysis$$knownObjects$1;
   $f_scg_Growable__$$plus$plus$eq__sc_TraversableOnce__scg_Growable(queue, xs);
   this.add$1__p1__Lcom_github_srtobi_inferium_prototype_flow_Value__scm_Queue__V(returnValue.normalized__Lcom_github_srtobi_inferium_prototype_flow_Value(), queue);
   while ($f_sc_TraversableOnce__nonEmpty__Z(queue)) {
@@ -10154,12 +10210,13 @@ $c_Lcom_github_srtobi_inferium_prototype_flow_ForwardFlowAnalysis.prototype.garb
         $m_s_Predef$().assert__Z__V(oldValue.isNormalized__Z());
         var value = newHeap.readProperty__Lcom_github_srtobi_inferium_prototype_flow_ValueLike__T__Z__Lcom_github_srtobi_inferium_prototype_flow_ValueLike(obj, prop, false).normalized__Lcom_github_srtobi_inferium_prototype_flow_Value();
         var resultValue = $m_Lcom_github_srtobi_inferium_prototype_flow_UnionValue$().apply__sc_Seq__Lcom_github_srtobi_inferium_prototype_flow_ValueLike(new $c_sjs_js_WrappedArray().init___sjs_js_Array([oldValue, value])).normalized__Lcom_github_srtobi_inferium_prototype_flow_Value();
-        if ((!oldValue.structureEquals__Lcom_github_srtobi_inferium_prototype_flow_ValueLike__Z(resultValue))) {
+        if ((elem$1 || (!oldValue.structureEquals__Lcom_github_srtobi_inferium_prototype_flow_ValueLike__Z(resultValue)))) {
           elem$1 = true
         };
         result.writeProperty__Lcom_github_srtobi_inferium_prototype_flow_ValueLike__T__Lcom_github_srtobi_inferium_prototype_flow_ValueLike__V(obj, prop, resultValue);
         this.add$1__p1__Lcom_github_srtobi_inferium_prototype_flow_Value__scm_Queue__V(resultValue, queue)
-      }
+      };
+      this.add$1__p1__Lcom_github_srtobi_inferium_prototype_flow_Value__scm_Queue__V(obj, queue)
     }
   };
   return new $c_T2().init___O__O(result, elem$1)
@@ -10191,9 +10248,9 @@ $c_Lcom_github_srtobi_inferium_prototype_flow_ForwardFlowAnalysis.prototype.anal
   var this$1 = this.globalHeapState$1;
   var heap = this$1.split__Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory();
   context.arguments$1.foreach__F1__V(new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function($this, heap$1) {
-    return (function(x$6$2) {
-      var x$6 = $as_Lcom_github_srtobi_inferium_prototype_flow_UserValue(x$6$2);
-      heap$1.createObject__Lcom_github_srtobi_inferium_prototype_flow_ObjectValue__V(x$6)
+    return (function(x$7$2) {
+      var x$7 = $as_Lcom_github_srtobi_inferium_prototype_flow_UserValue(x$7$2);
+      heap$1.createObject__Lcom_github_srtobi_inferium_prototype_flow_ObjectValue__V(x$7)
     })
   })(this, heap)));
   this.controlFlowTo__Lcom_github_srtobi_inferium_prototype_flow_Nodes$Node__Lcom_github_srtobi_inferium_prototype_flow_HeapMemory__V(context.callNode$1, heap);
@@ -10226,7 +10283,7 @@ $c_Lcom_github_srtobi_inferium_prototype_flow_ForwardFlowAnalysis.prototype.init
   var this$6 = $m_scm_Queue$();
   this.com$github$srtobi$inferium$prototype$flow$ForwardFlowAnalysis$$nodesToPropagate$1 = $as_scm_Queue($as_sc_GenTraversable(this$6.newBuilder__scm_Builder().result__O()));
   this.knownFunctions$1 = new $c_scm_HashMap().init___();
-  this.knownObjects$1 = new $c_scm_HashSet().init___();
+  this.com$github$srtobi$inferium$prototype$flow$ForwardFlowAnalysis$$knownObjects$1 = new $c_scm_HashSet().init___();
   return this
 });
 $c_Lcom_github_srtobi_inferium_prototype_flow_ForwardFlowAnalysis.prototype.controlFlowTo__Lcom_github_srtobi_inferium_prototype_flow_Nodes$Node__Lcom_github_srtobi_inferium_prototype_flow_HeapMemory__V = (function(node, heapState) {
@@ -10288,6 +10345,9 @@ $c_Lcom_github_srtobi_inferium_prototype_flow_ForwardFlowAnalysis$CallContext.pr
     i = ((1 + i) | 0)
   };
   this.arguments$1 = b.toList__sci_List();
+  var this$4 = $$outer.com$github$srtobi$inferium$prototype$flow$ForwardFlowAnalysis$$knownObjects$1;
+  var xs = this.arguments$1;
+  $f_scg_Growable__$$plus$plus$eq__sc_TraversableOnce__scg_Growable(this$4, xs);
   this.returnValue$1 = $m_Lcom_github_srtobi_inferium_prototype_flow_NeverValue$();
   this.endNode$1 = new $c_Lcom_github_srtobi_inferium_prototype_flow_ForwardFlowAnalysis$EndNode().init___Lcom_github_srtobi_inferium_prototype_flow_ForwardFlowAnalysis($$outer);
   var jsx$3 = $m_Lcom_github_srtobi_inferium_prototype_flow_ValueSource$().wrap__Lcom_github_srtobi_inferium_prototype_flow_ValueLike__Lcom_github_srtobi_inferium_prototype_flow_ValueSource($function);
@@ -10298,11 +10358,11 @@ $c_Lcom_github_srtobi_inferium_prototype_flow_ForwardFlowAnalysis$CallContext.pr
       return $m_Lcom_github_srtobi_inferium_prototype_flow_ValueSink$().wrap__Lcom_github_srtobi_inferium_prototype_flow_ValueLike__Lcom_github_srtobi_inferium_prototype_flow_ValueSourceProvider(value)
     })
   })(this));
-  var this$4 = $m_sc_Seq$();
-  this.callNode$1 = new $c_Lcom_github_srtobi_inferium_prototype_flow_Nodes$FunctionCall().init___Lcom_github_srtobi_inferium_prototype_flow_ValueSource__sc_Seq__Lcom_github_srtobi_inferium_prototype_flow_FlowAnalysis(jsx$3, $as_sc_Seq(jsx$2.map__F1__scg_CanBuildFrom__O(jsx$1, this$4.ReusableCBFInstance$2)), $$outer);
-  var this$5 = this.callNode$1;
-  var this$6 = this$5.com$github$srtobi$inferium$prototype$flow$Nodes$FunctionCall$$$undresult$2;
-  this.returnSource$1 = new $c_Lcom_github_srtobi_inferium_prototype_flow_ValueSink$$anon$1().init___Lcom_github_srtobi_inferium_prototype_flow_ValueSink(this$6);
+  var this$5 = $m_sc_Seq$();
+  this.callNode$1 = new $c_Lcom_github_srtobi_inferium_prototype_flow_Nodes$FunctionCall().init___Lcom_github_srtobi_inferium_prototype_flow_ValueSource__sc_Seq__sci_Map__Lcom_github_srtobi_inferium_prototype_flow_FlowAnalysis(jsx$3, $as_sc_Seq(jsx$2.map__F1__scg_CanBuildFrom__O(jsx$1, this$5.ReusableCBFInstance$2)), $as_sci_Map($m_s_Predef$().Map$2.apply__sc_Seq__sc_GenMap($m_sci_Nil$())), $$outer);
+  var this$6 = this.callNode$1;
+  var this$7 = this$6.com$github$srtobi$inferium$prototype$flow$Nodes$FunctionCall$$$undresult$2;
+  this.returnSource$1 = new $c_Lcom_github_srtobi_inferium_prototype_flow_ValueSink$$anon$1().init___Lcom_github_srtobi_inferium_prototype_flow_ValueSink(this$7);
   this.callNode$1.next$und$eq__Lcom_github_srtobi_inferium_prototype_flow_Nodes$Node__V(this.endNode$1);
   return this
 });
@@ -10570,6 +10630,77 @@ $c_Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory.prototype.set
 $c_Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory.prototype.toString__T = (function() {
   return new $c_s_StringContext().init___sc_Seq(new $c_sjs_js_WrappedArray().init___sjs_js_Array(["Heap[", "]"])).s__sc_Seq__T(new $c_sjs_js_WrappedArray().init___sjs_js_Array([this.idx$2]))
 });
+$c_Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory.prototype.squashed__Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory = (function() {
+  if (this.prev$2.isEmpty__Z()) {
+    return this
+  };
+  var unifier = new $c_Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory$Unifier().init___Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory(this);
+  while (unifier.canUp__Z()) {
+    unifier.up__V()
+  };
+  return new $c_Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory().init___I__s_Option__scm_Map(0, $m_s_None$(), unifier.objects$1)
+});
+$c_Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory.prototype.structureEquals__Lcom_github_srtobi_inferium_prototype_flow_HeapMemory__Z = (function(o) {
+  if ($is_Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory(o)) {
+    var x2 = $as_Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory(o);
+    $m_s_Predef$().assert__Z__V(this.prev$2.isEmpty__Z());
+    $m_s_Predef$().assert__Z__V(x2.prev$2.isEmpty__Z());
+    var a = this.squashed__Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory().com$github$srtobi$inferium$prototype$flow$IterationHeap$Memory$$objects$2;
+    var b = x2.squashed__Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory().com$github$srtobi$inferium$prototype$flow$IterationHeap$Memory$$objects$2;
+    var this$1 = a.iterator__sc_Iterator();
+    var res = true;
+    while ((res && this$1.hasNext__Z())) {
+      var arg1 = this$1.next__O();
+      var x0$2 = $as_T2(arg1);
+      if ((x0$2 === null)) {
+        throw new $c_s_MatchError().init___O(x0$2)
+      };
+      var obj = $as_Lcom_github_srtobi_inferium_prototype_flow_ObjectValue(x0$2.$$und1__O());
+      var aProps = $as_scm_Map(x0$2.$$und2__O());
+      var this$2 = b.get__O__s_Option(obj);
+      if ((!this$2.isEmpty__Z())) {
+        var arg1$1 = this$2.get__O();
+        var bProps = $as_scm_Map(arg1$1);
+        var this$3 = aProps.iterator__sc_Iterator();
+        var res$1 = true;
+        while ((res$1 && this$3.hasNext__Z())) {
+          var arg1$2 = this$3.next__O();
+          var x0$3 = $as_T2(arg1$2);
+          matchEnd5: {
+            if ((x0$3 !== null)) {
+              var prop = $as_T(x0$3.$$und1__O());
+              var p2 = $as_T2(x0$3.$$und2__O());
+              if ((p2 !== null)) {
+                var aValue = $as_Lcom_github_srtobi_inferium_prototype_flow_ValueLike(p2.$$und2__O());
+                var this$4 = bProps.get__O__s_Option(prop);
+                if ((!this$4.isEmpty__Z())) {
+                  var arg1$3 = this$4.get__O();
+                  var x0$4 = $as_T2(arg1$3);
+                  if ((x0$4 === null)) {
+                    throw new $c_s_MatchError().init___O(x0$4)
+                  };
+                  var bValue = $as_Lcom_github_srtobi_inferium_prototype_flow_ValueLike(x0$4.$$und2__O());
+                  res$1 = bValue.normalized__Lcom_github_srtobi_inferium_prototype_flow_Value().structureEquals__Lcom_github_srtobi_inferium_prototype_flow_ValueLike__Z(aValue.normalized__Lcom_github_srtobi_inferium_prototype_flow_Value());
+                  break matchEnd5
+                } else {
+                  res$1 = false;
+                  break matchEnd5
+                }
+              }
+            };
+            throw new $c_s_MatchError().init___O(x0$3)
+          }
+        };
+        res = res$1
+      } else {
+        res = false
+      }
+    };
+    return res
+  } else {
+    return false
+  }
+});
 $c_Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory.prototype.getHere__p2__Lcom_github_srtobi_inferium_prototype_flow_ObjectValue__T__s_Option = (function(obj, property) {
   var this$1 = this.com$github$srtobi$inferium$prototype$flow$IterationHeap$Memory$$objects$2.get__O__s_Option(obj);
   if (this$1.isEmpty__Z()) {
@@ -10588,17 +10719,27 @@ $c_Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory.prototype.ini
   this.writeCount$2 = 0;
   return this
 });
-$c_Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory.prototype.createObject__Lcom_github_srtobi_inferium_prototype_flow_ObjectValue__V = (function(target) {
-  $m_s_Predef$().assert__Z__V((!$is_Lcom_github_srtobi_inferium_prototype_flow_UnionValue(target)));
-  var this$1 = this.com$github$srtobi$inferium$prototype$flow$IterationHeap$Memory$$objects$2;
-  var hash = $m_sr_Statics$().anyHash__O__I(target);
-  var i = $f_scm_HashTable__index__I__I(this$1, hash);
-  var entry = this$1.findEntry__p5__O__I__scm_DefaultEntry(target, i);
-  if ((entry === null)) {
-    var table0 = this$1.table$5;
-    var $default = $as_scm_Map($m_scm_Map$().apply__sc_Seq__sc_GenMap($m_sci_Nil$()));
-    var newEntryIndex = ((table0 === this$1.table$5) ? i : $f_scm_HashTable__index__I__I(this$1, hash));
-    this$1.addEntry__p5__scm_DefaultEntry__I__O(new $c_scm_DefaultEntry().init___O__O(target, $default), newEntryIndex)
+$c_Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory.prototype.listProperties__Lcom_github_srtobi_inferium_prototype_flow_ValueLike__sc_Set = (function(target) {
+  var result = new $c_scm_HashSet().init___();
+  var x$16 = target.asObject__s_Option();
+  var this$5 = target.baseObjects__sc_Seq();
+  var that = x$16.toList__sci_List();
+  var this$4 = $m_sc_Seq$();
+  var bf = this$4.ReusableCBFInstance$2;
+  this.gatherPropertiesRec__p2__sc_Seq__scm_Set__V($as_sc_Seq($f_sc_TraversableLike__$$plus$plus$colon__sc_Traversable__scg_CanBuildFrom__O(this$5, that, bf)), result);
+  return result
+});
+$c_Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory.prototype.manipulateReference__Lcom_github_srtobi_inferium_prototype_flow_Reference__Lcom_github_srtobi_inferium_prototype_flow_ValueLike__V = (function(ref, newValue) {
+  if ((ref !== null)) {
+    var value = ref.resolved$3;
+    var obj = ref.baseObject$3;
+    var property = ref.property$3;
+    var org = this.readProperty__Lcom_github_srtobi_inferium_prototype_flow_ValueLike__T__Z__Lcom_github_srtobi_inferium_prototype_flow_ValueLike(obj, property, true);
+    if (((org === null) ? (value === null) : org.equals__O__Z(value))) {
+      this.writeProperty__Lcom_github_srtobi_inferium_prototype_flow_ValueLike__T__Lcom_github_srtobi_inferium_prototype_flow_ValueLike__V(obj, property, newValue)
+    }
+  } else {
+    throw new $c_s_MatchError().init___O(ref)
   }
 });
 $c_Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory.prototype.writeProperty__Lcom_github_srtobi_inferium_prototype_flow_ValueLike__T__Lcom_github_srtobi_inferium_prototype_flow_ValueLike__V = (function(target, propertyName, value) {
@@ -10619,28 +10760,18 @@ $c_Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory.prototype.wri
     })
   })(this, propertyName, value, writeId, mergeWithPrevious)))
 });
-$c_Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory.prototype.manipulateReference__Lcom_github_srtobi_inferium_prototype_flow_Reference__Lcom_github_srtobi_inferium_prototype_flow_ValueLike__V = (function(ref, newValue) {
-  if ((ref !== null)) {
-    var value = ref.resolved$3;
-    var obj = ref.baseObject$3;
-    var property = ref.property$3;
-    var org = this.readProperty__Lcom_github_srtobi_inferium_prototype_flow_ValueLike__T__Z__Lcom_github_srtobi_inferium_prototype_flow_ValueLike(obj, property, true);
-    if (((org === null) ? (value === null) : org.equals__O__Z(value))) {
-      this.writeProperty__Lcom_github_srtobi_inferium_prototype_flow_ValueLike__T__Lcom_github_srtobi_inferium_prototype_flow_ValueLike__V(obj, property, newValue)
-    }
-  } else {
-    throw new $c_s_MatchError().init___O(ref)
+$c_Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory.prototype.createObject__Lcom_github_srtobi_inferium_prototype_flow_ObjectValue__V = (function(target) {
+  $m_s_Predef$().assert__Z__V((!$is_Lcom_github_srtobi_inferium_prototype_flow_UnionValue(target)));
+  var this$1 = this.com$github$srtobi$inferium$prototype$flow$IterationHeap$Memory$$objects$2;
+  var hash = $m_sr_Statics$().anyHash__O__I(target);
+  var i = $f_scm_HashTable__index__I__I(this$1, hash);
+  var entry = this$1.findEntry__p5__O__I__scm_DefaultEntry(target, i);
+  if ((entry === null)) {
+    var table0 = this$1.table$5;
+    var $default = $as_scm_Map($m_scm_Map$().apply__sc_Seq__sc_GenMap($m_sci_Nil$()));
+    var newEntryIndex = ((table0 === this$1.table$5) ? i : $f_scm_HashTable__index__I__I(this$1, hash));
+    this$1.addEntry__p5__scm_DefaultEntry__I__O(new $c_scm_DefaultEntry().init___O__O(target, $default), newEntryIndex)
   }
-});
-$c_Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory.prototype.listProperties__Lcom_github_srtobi_inferium_prototype_flow_ValueLike__sc_Set = (function(target) {
-  var result = new $c_scm_HashSet().init___();
-  var x$16 = target.asObject__s_Option();
-  var this$5 = target.baseObjects__sc_Seq();
-  var that = x$16.toList__sci_List();
-  var this$4 = $m_sc_Seq$();
-  var bf = this$4.ReusableCBFInstance$2;
-  this.gatherPropertiesRec__p2__sc_Seq__scm_Set__V($as_sc_Seq($f_sc_TraversableLike__$$plus$plus$colon__sc_Traversable__scg_CanBuildFrom__O(this$5, that, bf)), result);
-  return result
 });
 $c_Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory.prototype.get__p2__Lcom_github_srtobi_inferium_prototype_flow_ObjectValue__sci_Set__T__Z__Lcom_github_srtobi_inferium_prototype_flow_ValueLike = (function(obj, baseObjects, property, cache) {
   var x1 = this.getHere__p2__Lcom_github_srtobi_inferium_prototype_flow_ObjectValue__T__s_Option(obj, property);
@@ -10948,9 +11079,16 @@ function $c_Lcom_github_srtobi_inferium_prototype_flow_Nodes$FunctionCall() {
   $c_Lcom_github_srtobi_inferium_prototype_flow_Nodes$Node.call(this);
   this.target$2 = null;
   this.arguments$2 = null;
+  this.callStack$2 = null;
   this.calls$2 = null;
   this.com$github$srtobi$inferium$prototype$flow$Nodes$FunctionCall$$$undresult$2 = null;
   this.com$github$srtobi$inferium$prototype$flow$Nodes$FunctionCall$$allReturns$2 = null;
+  this.com$github$srtobi$inferium$prototype$flow$Nodes$FunctionCall$$hasRecursion$2 = false;
+  this.com$github$srtobi$inferium$prototype$flow$Nodes$FunctionCall$$currentReturn$2 = null;
+  this.com$github$srtobi$inferium$prototype$flow$Nodes$FunctionCall$$invariantHeap$2 = null;
+  this.com$github$srtobi$inferium$prototype$flow$Nodes$FunctionCall$$currentArguments$2 = null;
+  this.mergedArguments$2 = null;
+  this.com$github$srtobi$inferium$prototype$flow$Nodes$FunctionCall$$argsChanged$2 = false;
   this.mergeNode$2 = null
 }
 $c_Lcom_github_srtobi_inferium_prototype_flow_Nodes$FunctionCall.prototype = new $h_Lcom_github_srtobi_inferium_prototype_flow_Nodes$Node();
@@ -10960,15 +11098,27 @@ function $h_Lcom_github_srtobi_inferium_prototype_flow_Nodes$FunctionCall() {
   /*<skip>*/
 }
 $h_Lcom_github_srtobi_inferium_prototype_flow_Nodes$FunctionCall.prototype = $c_Lcom_github_srtobi_inferium_prototype_flow_Nodes$FunctionCall.prototype;
-$c_Lcom_github_srtobi_inferium_prototype_flow_Nodes$FunctionCall.prototype.init___Lcom_github_srtobi_inferium_prototype_flow_ValueSource__sc_Seq__Lcom_github_srtobi_inferium_prototype_flow_FlowAnalysis = (function(target, arguments$2, flowAnalysis) {
+$c_Lcom_github_srtobi_inferium_prototype_flow_Nodes$FunctionCall.prototype.init___Lcom_github_srtobi_inferium_prototype_flow_ValueSource__sc_Seq__sci_Map__Lcom_github_srtobi_inferium_prototype_flow_FlowAnalysis = (function(target, arguments$2, callStack, flowAnalysis) {
   this.target$2 = target;
   this.arguments$2 = arguments$2;
+  this.callStack$2 = callStack;
   $c_Lcom_github_srtobi_inferium_prototype_flow_Nodes$Node.prototype.init___Lcom_github_srtobi_inferium_prototype_flow_FlowAnalysis.call(this, flowAnalysis);
   this.calls$2 = new $c_scm_HashMap().init___();
   this.com$github$srtobi$inferium$prototype$flow$Nodes$FunctionCall$$$undresult$2 = new $c_Lcom_github_srtobi_inferium_prototype_flow_ValueSink().init___();
   $m_scm_Buffer$();
   var this$3 = new $c_sjs_js_WrappedArray().init___();
   this.com$github$srtobi$inferium$prototype$flow$Nodes$FunctionCall$$allReturns$2 = this$3;
+  this.com$github$srtobi$inferium$prototype$flow$Nodes$FunctionCall$$currentReturn$2 = $m_Lcom_github_srtobi_inferium_prototype_flow_NeverValue$();
+  this.com$github$srtobi$inferium$prototype$flow$Nodes$FunctionCall$$currentArguments$2 = $m_s_None$();
+  var jsx$1 = new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function($this) {
+    return (function(x$2$2) {
+      $as_Lcom_github_srtobi_inferium_prototype_flow_ValueSourceProvider(x$2$2);
+      return new $c_Lcom_github_srtobi_inferium_prototype_flow_ValueSink().init___()
+    })
+  })(this));
+  var this$4 = $m_sc_Seq$();
+  this.mergedArguments$2 = $as_sc_Seq(arguments$2.map__F1__scg_CanBuildFrom__O(jsx$1, this$4.ReusableCBFInstance$2));
+  this.com$github$srtobi$inferium$prototype$flow$Nodes$FunctionCall$$argsChanged$2 = false;
   this.mergeNode$2 = new $c_Lcom_github_srtobi_inferium_prototype_flow_Nodes$MergeNode().init___I__Lcom_github_srtobi_inferium_prototype_flow_Nodes$Node__Lcom_github_srtobi_inferium_prototype_flow_FlowAnalysis(0, new $c_Lcom_github_srtobi_inferium_prototype_flow_Nodes$FunctionCall$$anon$2().init___Lcom_github_srtobi_inferium_prototype_flow_Nodes$FunctionCall(this), this.flowAnalysis$1);
   return this
 });
@@ -10979,95 +11129,173 @@ $c_Lcom_github_srtobi_inferium_prototype_flow_Nodes$FunctionCall.prototype.argum
   if (argumentValues$lzy$1.$$undinitialized$1) {
     return $as_sc_Seq(argumentValues$lzy$1.$$undvalue$1)
   } else {
-    var jsx$2 = this.arguments$2;
+    var jsx$2 = this.mergedArguments$2;
     var jsx$1 = new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function($this) {
-      return (function(x$4$2) {
-        var x$4 = $as_Lcom_github_srtobi_inferium_prototype_flow_ValueSourceProvider(x$4$2);
-        return new $c_Lcom_github_srtobi_inferium_prototype_flow_ValueSink$$anon$1().init___Lcom_github_srtobi_inferium_prototype_flow_ValueSink(x$4).get__Lcom_github_srtobi_inferium_prototype_flow_ValueLike()
+      return (function(x$6$2) {
+        var x$6 = $as_Lcom_github_srtobi_inferium_prototype_flow_ValueSink(x$6$2);
+        return new $c_Lcom_github_srtobi_inferium_prototype_flow_ValueSink$$anon$1().init___Lcom_github_srtobi_inferium_prototype_flow_ValueSink(x$6).get__Lcom_github_srtobi_inferium_prototype_flow_ValueLike()
       })
     })(this));
     var this$1 = $m_sc_Seq$();
     return $as_sc_Seq(argumentValues$lzy$1.initialize__O__O(jsx$2.map__F1__scg_CanBuildFrom__O(jsx$1, this$1.ReusableCBFInstance$2)))
   }
 });
+$c_Lcom_github_srtobi_inferium_prototype_flow_Nodes$FunctionCall.prototype.argumentValues$1__p2__sr_LazyRef__sc_Seq = (function(argumentValues$lzy$1) {
+  return (argumentValues$lzy$1.$$undinitialized$1 ? $as_sc_Seq(argumentValues$lzy$1.$$undvalue$1) : this.argumentValues$lzycompute$1__p2__sr_LazyRef__sc_Seq(argumentValues$lzy$1))
+});
 $c_Lcom_github_srtobi_inferium_prototype_flow_Nodes$FunctionCall.prototype.onControlFlow__Lcom_github_srtobi_inferium_prototype_flow_HeapMemory__V = (function(heap) {
   var argumentValues$lzy = new $c_sr_LazyRef().init___();
   var funcVal = this.target$2.get__Lcom_github_srtobi_inferium_prototype_flow_ValueLike().remove__Lcom_github_srtobi_inferium_prototype_flow_HeapMemory__F1__Lcom_github_srtobi_inferium_prototype_flow_ValueLike(heap, new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function($this) {
-    return (function(x$3$2) {
-      var x$3 = $as_Lcom_github_srtobi_inferium_prototype_flow_ValueLike(x$3$2);
-      return (!$is_Lcom_github_srtobi_inferium_prototype_flow_FunctionLike(x$3.asValue__Lcom_github_srtobi_inferium_prototype_flow_Value()))
+    return (function(x$4$2) {
+      var x$4 = $as_Lcom_github_srtobi_inferium_prototype_flow_ValueLike(x$4$2);
+      return (!$is_Lcom_github_srtobi_inferium_prototype_flow_FunctionLike(x$4.asValue__Lcom_github_srtobi_inferium_prototype_flow_Value()))
     })
   })(this)));
   var functions = funcVal.asFunctions__sc_Seq();
-  this.com$github$srtobi$inferium$prototype$flow$Nodes$FunctionCall$$allReturns$2.clear__V();
-  var jsx$1 = new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function(this$2, argumentValues$lzy$1) {
+  this.com$github$srtobi$inferium$prototype$flow$Nodes$FunctionCall$$hasRecursion$2 = false;
+  this.com$github$srtobi$inferium$prototype$flow$Nodes$FunctionCall$$argsChanged$2 = false;
+  this.com$github$srtobi$inferium$prototype$flow$Nodes$FunctionCall$$invariantHeap$2 = heap.split__Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory();
+  var x1 = this.com$github$srtobi$inferium$prototype$flow$Nodes$FunctionCall$$currentArguments$2;
+  if ($is_s_Some(x1)) {
+    var x2 = $as_s_Some(x1);
+    var values = $as_sc_Seq(x2.value$2);
+    var args = values
+  } else {
+    var x = $m_s_None$();
+    if ((!(x === x1))) {
+      throw new $c_s_MatchError().init___O(x1)
+    };
+    var jsx$2 = this.arguments$2;
+    var jsx$1 = new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function(this$2) {
+      return (function(x$5$2) {
+        var x$5 = $as_Lcom_github_srtobi_inferium_prototype_flow_ValueSourceProvider(x$5$2);
+        return new $c_Lcom_github_srtobi_inferium_prototype_flow_ValueSink$$anon$1().init___Lcom_github_srtobi_inferium_prototype_flow_ValueSink(x$5).get__Lcom_github_srtobi_inferium_prototype_flow_ValueLike()
+      })
+    })(this));
+    var this$1 = $m_sc_Seq$();
+    var values$2 = $as_sc_Seq(jsx$2.map__F1__scg_CanBuildFrom__O(jsx$1, this$1.ReusableCBFInstance$2));
+    this.com$github$srtobi$inferium$prototype$flow$Nodes$FunctionCall$$currentArguments$2 = new $c_s_Some().init___O(values$2);
+    var args = values$2
+  };
+  var jsx$3 = this.mergedArguments$2;
+  var this$3 = $m_sc_Seq$();
+  $as_sc_IterableLike(jsx$3.zip__sc_GenIterable__scg_CanBuildFrom__O(args, this$3.ReusableCBFInstance$2)).foreach__F1__V(new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function(this$3$1) {
     return (function(x0$1$2) {
-      var x0$1 = $as_Lcom_github_srtobi_inferium_prototype_flow_FunctionLike(x0$1$2);
-      if ($is_Lcom_github_srtobi_inferium_prototype_flow_UserValue(x0$1)) {
-        var x4 = $as_Lcom_github_srtobi_inferium_prototype_flow_UserValue(x0$1);
-        var jsx$3 = this$2.com$github$srtobi$inferium$prototype$flow$Nodes$FunctionCall$$allReturns$2;
-        var jsx$2 = $m_Lcom_github_srtobi_inferium_prototype_flow_ValueSource$();
-        var arguments$2 = this$2.argumentValues$1__p2__sr_LazyRef__sc_Seq(argumentValues$lzy$1);
-        jsx$3.$$plus$eq__O__scm_Buffer(jsx$2.wrap__Lcom_github_srtobi_inferium_prototype_flow_ValueLike__Lcom_github_srtobi_inferium_prototype_flow_ValueSource(x4.$$undfunctionInfo__p5__Lcom_github_srtobi_inferium_prototype_flow_UserValueFunctionInfo().onCall__sc_Seq__Lcom_github_srtobi_inferium_prototype_flow_UserValue(arguments$2)));
-        return this$2.mergeNode$2
+      var x0$1 = $as_T2(x0$1$2);
+      if ((x0$1 !== null)) {
+        var sink = $as_Lcom_github_srtobi_inferium_prototype_flow_ValueSink(x0$1.$$und1__O());
+        var arg = $as_Lcom_github_srtobi_inferium_prototype_flow_ValueLike(x0$1.$$und2__O());
+        sink.set__Lcom_github_srtobi_inferium_prototype_flow_ValueLike__V(arg)
+      } else {
+        throw new $c_s_MatchError().init___O(x0$1)
+      }
+    })
+  })(this)));
+  this.com$github$srtobi$inferium$prototype$flow$Nodes$FunctionCall$$allReturns$2.clear__V();
+  var jsx$4 = new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function(this$4, argumentValues$lzy$1) {
+    return (function(x0$2$2) {
+      var x0$2 = $as_Lcom_github_srtobi_inferium_prototype_flow_FunctionLike(x0$2$2);
+      if ($is_Lcom_github_srtobi_inferium_prototype_flow_UserValue(x0$2)) {
+        var x4 = $as_Lcom_github_srtobi_inferium_prototype_flow_UserValue(x0$2);
+        var jsx$6 = this$4.com$github$srtobi$inferium$prototype$flow$Nodes$FunctionCall$$allReturns$2;
+        var jsx$5 = $m_Lcom_github_srtobi_inferium_prototype_flow_ValueSource$();
+        var arguments$2 = this$4.argumentValues$1__p2__sr_LazyRef__sc_Seq(argumentValues$lzy$1);
+        jsx$6.$$plus$eq__O__scm_Buffer(jsx$5.wrap__Lcom_github_srtobi_inferium_prototype_flow_ValueLike__Lcom_github_srtobi_inferium_prototype_flow_ValueSource(x4.$$undfunctionInfo__p5__Lcom_github_srtobi_inferium_prototype_flow_UserValueFunctionInfo().onCall__sc_Seq__Lcom_github_srtobi_inferium_prototype_flow_UserValue(arguments$2)));
+        return this$4.mergeNode$2
       };
-      if ($is_Lcom_github_srtobi_inferium_prototype_flow_FunctionValue(x0$1)) {
-        var x2 = $as_Lcom_github_srtobi_inferium_prototype_flow_FunctionValue(x0$1);
-        var o10 = $m_Lcom_github_srtobi_inferium_prototype_flow_FunctionValue$().unapply__Lcom_github_srtobi_inferium_prototype_flow_FunctionValue__s_Option(x2);
+      if ($is_Lcom_github_srtobi_inferium_prototype_flow_FunctionValue(x0$2)) {
+        var x2$1 = $as_Lcom_github_srtobi_inferium_prototype_flow_FunctionValue(x0$2);
+        var o10 = $m_Lcom_github_srtobi_inferium_prototype_flow_FunctionValue$().unapply__Lcom_github_srtobi_inferium_prototype_flow_FunctionValue__s_Option(x2$1);
         if ((!o10.isEmpty__Z())) {
           var template = $as_Lcom_github_srtobi_inferium_prototype_flow_Templates$Function($as_T2(o10.get__O()).$$und1__O());
           var closures = $as_sc_Seq($as_T2(o10.get__O()).$$und2__O());
-          var this$1 = this$2.calls$2;
-          var hash = $m_sr_Statics$().anyHash__O__I(x2);
-          var i = $f_scm_HashTable__index__I__I(this$1, hash);
-          var entry = this$1.findEntry__p5__O__I__scm_DefaultEntry(x2, i);
-          if ((entry !== null)) {
-            var jsx$4 = entry.value$1
+          var x1$2 = this$4.callStack$2.get__O__s_Option(template);
+          if ($is_s_Some(x1$2)) {
+            var x2$2 = $as_s_Some(x1$2);
+            var prevCallNode = $as_Lcom_github_srtobi_inferium_prototype_flow_Nodes$FunctionCall(x2$2.value$2);
+            prevCallNode.com$github$srtobi$inferium$prototype$flow$Nodes$FunctionCall$$hasRecursion$2 = true;
+            var this$6 = $as_sc_IterableLike(prevCallNode.com$github$srtobi$inferium$prototype$flow$Nodes$FunctionCall$$currentArguments$2.get__O());
+            var that = this$4.argumentValues$1__p2__sr_LazyRef__sc_Seq(argumentValues$lzy$1);
+            var thisElem = $m_Lcom_github_srtobi_inferium_prototype_flow_UndefinedValue$();
+            var thatElem = $m_Lcom_github_srtobi_inferium_prototype_flow_UndefinedValue$();
+            var this$5 = $m_sc_Seq$();
+            var bf = this$5.ReusableCBFInstance$2;
+            var jsx$8 = $as_sc_TraversableLike($f_sc_IterableLike__zipAll__sc_GenIterable__O__O__scg_CanBuildFrom__O(this$6, that, thisElem, thatElem, bf));
+            var jsx$7 = new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function($this$1, prevCallNode$1) {
+              return (function(x0$3$2) {
+                var x0$3 = $as_T2(x0$3$2);
+                if ((x0$3 !== null)) {
+                  var old = $as_Lcom_github_srtobi_inferium_prototype_flow_ValueLike(x0$3.$$und1__O());
+                  var a = $as_Lcom_github_srtobi_inferium_prototype_flow_ValueLike(x0$3.$$und2__O());
+                  var merged = $m_Lcom_github_srtobi_inferium_prototype_flow_UnionValue$().apply__sc_Seq__Lcom_github_srtobi_inferium_prototype_flow_ValueLike(new $c_sjs_js_WrappedArray().init___sjs_js_Array([old, a])).normalized__Lcom_github_srtobi_inferium_prototype_flow_Value();
+                  if ((!merged.structureEquals__Lcom_github_srtobi_inferium_prototype_flow_ValueLike__Z(old.normalized__Lcom_github_srtobi_inferium_prototype_flow_Value()))) {
+                    prevCallNode$1.com$github$srtobi$inferium$prototype$flow$Nodes$FunctionCall$$argsChanged$2 = true
+                  };
+                  return merged
+                } else {
+                  throw new $c_s_MatchError().init___O(x0$3)
+                }
+              })
+            })(this$4, prevCallNode));
+            var this$7 = $m_sc_Seq$();
+            prevCallNode.com$github$srtobi$inferium$prototype$flow$Nodes$FunctionCall$$currentArguments$2 = new $c_s_Some().init___O(jsx$8.map__F1__scg_CanBuildFrom__O(jsx$7, this$7.ReusableCBFInstance$2));
+            this$4.com$github$srtobi$inferium$prototype$flow$Nodes$FunctionCall$$allReturns$2.$$plus$eq__O__scm_Buffer($m_Lcom_github_srtobi_inferium_prototype_flow_ValueSource$().wrap__Lcom_github_srtobi_inferium_prototype_flow_ValueLike__Lcom_github_srtobi_inferium_prototype_flow_ValueSource(prevCallNode.com$github$srtobi$inferium$prototype$flow$Nodes$FunctionCall$$currentReturn$2));
+            return this$4.mergeNode$2
           } else {
-            var table0 = this$1.table$5;
-            var $default = template.instantiate__sc_Seq__sc_Seq__Lcom_github_srtobi_inferium_prototype_flow_Nodes$Node__T2(closures, this$2.arguments$2, this$2.mergeNode$2);
-            var newEntryIndex = ((table0 === this$1.table$5) ? i : $f_scm_HashTable__index__I__I(this$1, hash));
-            var jsx$4 = this$1.addEntry__p5__scm_DefaultEntry__I__O(new $c_scm_DefaultEntry().init___O__O(x2, $default), newEntryIndex)
-          };
-          var x1$2 = $as_T2(jsx$4);
-          if ((x1$2 === null)) {
-            throw new $c_s_MatchError().init___O(x1$2)
-          };
-          var begin = $as_Lcom_github_srtobi_inferium_prototype_flow_Nodes$Node(x1$2.$$und1__O());
-          var returns = $as_sc_Seq(x1$2.$$und2__O());
-          var jsx$6 = this$2.com$github$srtobi$inferium$prototype$flow$Nodes$FunctionCall$$allReturns$2;
-          var jsx$5 = new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function(this$2$1) {
-            return (function(x$6$2) {
-              var x$6 = $as_Lcom_github_srtobi_inferium_prototype_flow_ValueSourceProvider(x$6$2);
-              return new $c_Lcom_github_srtobi_inferium_prototype_flow_ValueSink$$anon$1().init___Lcom_github_srtobi_inferium_prototype_flow_ValueSink(x$6)
-            })
-          })(this$2));
-          var this$3 = $m_sc_Seq$();
-          jsx$6.$$plus$plus$eq__sc_TraversableOnce__scg_Growable($as_sc_TraversableOnce(returns.map__F1__scg_CanBuildFrom__O(jsx$5, this$3.ReusableCBFInstance$2)));
-          return begin
+            var x$1 = $m_s_None$();
+            if ((x$1 === x1$2)) {
+              var this$8 = this$4.calls$2;
+              var hash = $m_sr_Statics$().anyHash__O__I(x2$1);
+              var i = $f_scm_HashTable__index__I__I(this$8, hash);
+              var entry = this$8.findEntry__p5__O__I__scm_DefaultEntry(x2$1, i);
+              if ((entry !== null)) {
+                var jsx$9 = entry.value$1
+              } else {
+                var table0 = this$8.table$5;
+                var $default = template.instantiate__sc_Seq__sc_Seq__sci_Map__Lcom_github_srtobi_inferium_prototype_flow_Nodes$Node__T2(closures, this$4.mergedArguments$2, this$4.callStack$2.$$plus__T2__sci_Map(new $c_T2().init___O__O(template, this$4)), this$4.mergeNode$2);
+                var newEntryIndex = ((table0 === this$8.table$5) ? i : $f_scm_HashTable__index__I__I(this$8, hash));
+                var jsx$9 = this$8.addEntry__p5__scm_DefaultEntry__I__O(new $c_scm_DefaultEntry().init___O__O(x2$1, $default), newEntryIndex)
+              };
+              var x1$3 = $as_T2(jsx$9);
+              if ((x1$3 === null)) {
+                throw new $c_s_MatchError().init___O(x1$3)
+              };
+              var begin = $as_Lcom_github_srtobi_inferium_prototype_flow_Nodes$Node(x1$3.$$und1__O());
+              var returns = $as_sc_Seq(x1$3.$$und2__O());
+              var jsx$11 = this$4.com$github$srtobi$inferium$prototype$flow$Nodes$FunctionCall$$allReturns$2;
+              var jsx$10 = new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function(this$3$2) {
+                return (function(x$8$2) {
+                  var x$8 = $as_Lcom_github_srtobi_inferium_prototype_flow_ValueSourceProvider(x$8$2);
+                  return new $c_Lcom_github_srtobi_inferium_prototype_flow_ValueSink$$anon$1().init___Lcom_github_srtobi_inferium_prototype_flow_ValueSink(x$8)
+                })
+              })(this$4));
+              var this$11 = $m_sc_Seq$();
+              jsx$11.$$plus$plus$eq__sc_TraversableOnce__scg_Growable($as_sc_TraversableOnce(returns.map__F1__scg_CanBuildFrom__O(jsx$10, this$11.ReusableCBFInstance$2)));
+              return begin
+            } else {
+              throw new $c_s_MatchError().init___O(x1$2)
+            }
+          }
         }
       };
-      throw new $c_s_MatchError().init___O(x0$1)
+      throw new $c_s_MatchError().init___O(x0$2)
     })
   })(this, argumentValues$lzy));
-  var this$4 = $m_sc_Seq$();
-  var begins = $as_sc_Seq(functions.map__F1__scg_CanBuildFrom__O(jsx$1, this$4.ReusableCBFInstance$2));
+  var this$12 = $m_sc_Seq$();
+  var begins = $as_sc_Seq(functions.map__F1__scg_CanBuildFrom__O(jsx$4, this$12.ReusableCBFInstance$2));
   this.mergeNode$2.setNumBranchesToWaitFor__I__V(this.com$github$srtobi$inferium$prototype$flow$Nodes$FunctionCall$$allReturns$2.length__I());
   if (begins.isEmpty__Z()) {
     var next = this.nextNode$1;
     this.flowAnalysis$1.noControlFlowTo__Lcom_github_srtobi_inferium_prototype_flow_Nodes$Node__V(next)
   } else {
-    begins.foreach__F1__V(new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function(this$3$1, heap$1) {
+    begins.foreach__F1__V(new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function(this$5$1, heap$1) {
       return (function(begin$2) {
         var begin$1 = $as_Lcom_github_srtobi_inferium_prototype_flow_Nodes$Node(begin$2);
         var heap$2 = heap$1.split__Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory();
-        this$3$1.flowAnalysis$1.controlFlowTo__Lcom_github_srtobi_inferium_prototype_flow_Nodes$Node__Lcom_github_srtobi_inferium_prototype_flow_HeapMemory__V(begin$1, heap$2)
+        this$5$1.flowAnalysis$1.controlFlowTo__Lcom_github_srtobi_inferium_prototype_flow_Nodes$Node__Lcom_github_srtobi_inferium_prototype_flow_HeapMemory__V(begin$1, heap$2)
       })
     })(this, heap)))
   }
-});
-$c_Lcom_github_srtobi_inferium_prototype_flow_Nodes$FunctionCall.prototype.argumentValues$1__p2__sr_LazyRef__sc_Seq = (function(argumentValues$lzy$1) {
-  return (argumentValues$lzy$1.$$undinitialized$1 ? $as_sc_Seq(argumentValues$lzy$1.$$undvalue$1) : this.argumentValues$lzycompute$1__p2__sr_LazyRef__sc_Seq(argumentValues$lzy$1))
 });
 function $is_Lcom_github_srtobi_inferium_prototype_flow_Nodes$FunctionCall(obj) {
   return (!(!((obj && obj.$classData) && obj.$classData.ancestors.Lcom_github_srtobi_inferium_prototype_flow_Nodes$FunctionCall)))
@@ -11111,26 +11339,78 @@ $c_Lcom_github_srtobi_inferium_prototype_flow_Nodes$FunctionCall$$anon$2.prototy
   return this
 });
 $c_Lcom_github_srtobi_inferium_prototype_flow_Nodes$FunctionCall$$anon$2.prototype.onNoControlFlow__V = (function() {
+  this.$$outer$2.com$github$srtobi$inferium$prototype$flow$Nodes$FunctionCall$$invariantHeap$2 = null;
   var this$1 = this.$$outer$2;
   var next = this$1.nextNode$1;
   this.flowAnalysis$1.noControlFlowTo__Lcom_github_srtobi_inferium_prototype_flow_Nodes$Node__V(next)
 });
 $c_Lcom_github_srtobi_inferium_prototype_flow_Nodes$FunctionCall$$anon$2.prototype.onControlFlow__Lcom_github_srtobi_inferium_prototype_flow_HeapMemory__V = (function(heap) {
-  var jsx$2 = this.$$outer$2.com$github$srtobi$inferium$prototype$flow$Nodes$FunctionCall$$$undresult$2;
   var jsx$1 = $m_Lcom_github_srtobi_inferium_prototype_flow_UnionValue$();
   var this$2 = this.$$outer$2.com$github$srtobi$inferium$prototype$flow$Nodes$FunctionCall$$allReturns$2;
   var f = new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function($this) {
-    return (function(x$2$2) {
-      var x$2 = $as_Lcom_github_srtobi_inferium_prototype_flow_ValueSource(x$2$2);
-      return x$2.get__Lcom_github_srtobi_inferium_prototype_flow_ValueLike()
+    return (function(x$3$2) {
+      var x$3 = $as_Lcom_github_srtobi_inferium_prototype_flow_ValueSource(x$3$2);
+      return x$3.get__Lcom_github_srtobi_inferium_prototype_flow_ValueLike()
     })
   })(this));
   var this$1 = $m_scm_Buffer$();
   var bf = this$1.ReusableCBFInstance$2;
-  jsx$2.set__Lcom_github_srtobi_inferium_prototype_flow_ValueLike__V(jsx$1.apply__sc_Seq__Lcom_github_srtobi_inferium_prototype_flow_ValueLike($as_sc_Seq($f_sc_TraversableLike__map__F1__scg_CanBuildFrom__O(this$2, f, bf))));
-  var this$3 = this.$$outer$2;
-  var next = this$3.nextNode$1;
-  this.flowAnalysis$1.controlFlowTo__Lcom_github_srtobi_inferium_prototype_flow_Nodes$Node__Lcom_github_srtobi_inferium_prototype_flow_HeapMemory__V(next, heap)
+  var ret = jsx$1.apply__sc_Seq__Lcom_github_srtobi_inferium_prototype_flow_ValueLike($as_sc_Seq($f_sc_TraversableLike__map__F1__scg_CanBuildFrom__O(this$2, f, bf)));
+  this.$$outer$2.com$github$srtobi$inferium$prototype$flow$Nodes$FunctionCall$$$undresult$2.set__Lcom_github_srtobi_inferium_prototype_flow_ValueLike__V(ret);
+  var retValue = ret.normalized__Lcom_github_srtobi_inferium_prototype_flow_Value();
+  if (this.$$outer$2.com$github$srtobi$inferium$prototype$flow$Nodes$FunctionCall$$hasRecursion$2) {
+    var this$3 = this.flowAnalysis$1;
+    var array = [this.$$outer$2.com$github$srtobi$inferium$prototype$flow$Nodes$FunctionCall$$invariantHeap$2, heap];
+    var jsx$2 = $m_Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory$();
+    $m_sc_Seq$();
+    $m_sjs_js_WrappedArray$();
+    var b = new $c_sjs_js_WrappedArray().init___();
+    var x1 = $uI(array.length);
+    switch (x1) {
+      case (-1): {
+        break
+      }
+    };
+    var i = 0;
+    var len = $uI(array.length);
+    while ((i < len)) {
+      var index = i;
+      var arg1 = array[index];
+      var x$1 = $as_Lcom_github_srtobi_inferium_prototype_flow_HeapMemory(arg1);
+      var elem = $as_Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory(x$1);
+      b.array$6.push(elem);
+      i = ((1 + i) | 0)
+    };
+    var mergedHeap = jsx$2.unify__sc_Seq__Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory(b);
+    if (this.$$outer$2.com$github$srtobi$inferium$prototype$flow$Nodes$FunctionCall$$argsChanged$2) {
+      var jsx$3 = true
+    } else {
+      var jsx$4 = mergedHeap.squashed__Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory();
+      var this$7 = this.$$outer$2.com$github$srtobi$inferium$prototype$flow$Nodes$FunctionCall$$invariantHeap$2;
+      var jsx$3 = (!jsx$4.structureEquals__Lcom_github_srtobi_inferium_prototype_flow_HeapMemory__Z(this$7.squashed__Lcom_github_srtobi_inferium_prototype_flow_IterationHeap$Memory()))
+    };
+    if ((jsx$3 || (!retValue.structureEquals__Lcom_github_srtobi_inferium_prototype_flow_ValueLike__Z(this.$$outer$2.com$github$srtobi$inferium$prototype$flow$Nodes$FunctionCall$$currentReturn$2)))) {
+      this.$$outer$2.com$github$srtobi$inferium$prototype$flow$Nodes$FunctionCall$$currentReturn$2 = retValue;
+      var next = this.$$outer$2;
+      this.flowAnalysis$1.controlFlowTo__Lcom_github_srtobi_inferium_prototype_flow_Nodes$Node__Lcom_github_srtobi_inferium_prototype_flow_HeapMemory__V(next, mergedHeap);
+      return (void 0)
+    };
+    var heapAfterCall = mergedHeap
+  } else {
+    var heapAfterCall = heap
+  };
+  this.$$outer$2.com$github$srtobi$inferium$prototype$flow$Nodes$FunctionCall$$currentArguments$2 = $m_s_None$();
+  this.$$outer$2.com$github$srtobi$inferium$prototype$flow$Nodes$FunctionCall$$invariantHeap$2 = null;
+  var x$2 = $m_Lcom_github_srtobi_inferium_prototype_flow_NeverValue$();
+  if (((retValue !== null) && retValue.equals__O__Z(x$2))) {
+    var this$8 = this.$$outer$2;
+    var next$1 = this$8.nextNode$1;
+    this.flowAnalysis$1.noControlFlowTo__Lcom_github_srtobi_inferium_prototype_flow_Nodes$Node__V(next$1)
+  } else {
+    var this$9 = this.$$outer$2;
+    var next$2 = this$9.nextNode$1;
+    this.flowAnalysis$1.controlFlowTo__Lcom_github_srtobi_inferium_prototype_flow_Nodes$Node__Lcom_github_srtobi_inferium_prototype_flow_HeapMemory__V(next$2, heapAfterCall)
+  }
 });
 var $d_Lcom_github_srtobi_inferium_prototype_flow_Nodes$FunctionCall$$anon$2 = new $TypeData().initClass({
   Lcom_github_srtobi_inferium_prototype_flow_Nodes$FunctionCall$$anon$2: 0
@@ -11563,6 +11843,7 @@ function $m_Lcom_github_srtobi_inferium_prototype_flow_Solver$() {
 /** @constructor */
 function $c_Lcom_github_srtobi_inferium_prototype_flow_TemplateBuilder$$anon$1() {
   $c_O.call(this);
+  this.innerFunctionDefinitions$1 = null;
   this.script$1$1 = null
 }
 $c_Lcom_github_srtobi_inferium_prototype_flow_TemplateBuilder$$anon$1.prototype = new $h_O();
@@ -11574,11 +11855,12 @@ function $h_Lcom_github_srtobi_inferium_prototype_flow_TemplateBuilder$$anon$1()
 $h_Lcom_github_srtobi_inferium_prototype_flow_TemplateBuilder$$anon$1.prototype = $c_Lcom_github_srtobi_inferium_prototype_flow_TemplateBuilder$$anon$1.prototype;
 $c_Lcom_github_srtobi_inferium_prototype_flow_TemplateBuilder$$anon$1.prototype.instantiate__Lcom_github_srtobi_inferium_prototype_flow_FlowAnalysis__Lcom_github_srtobi_inferium_prototype_flow_ObjectValue__Lcom_github_srtobi_inferium_prototype_flow_Nodes$Node__T2 = (function(flowAnalysis, global, endNode) {
   var globalClosure = new $c_Lcom_github_srtobi_inferium_prototype_flow_TemplateBuilder$Closure().init___s_Option($m_s_None$());
-  var builder = new $c_Lcom_github_srtobi_inferium_prototype_flow_TemplateBuilder().init___sc_Seq__sc_Seq__sc_Seq__s_Option__Lcom_github_srtobi_inferium_prototype_flow_Nodes$Node__Lcom_github_srtobi_inferium_prototype_flow_FlowAnalysis(this.script$1$1.main$2, $as_sc_Seq($m_sc_Seq$().apply__sc_Seq__sc_GenTraversable(new $c_sjs_js_WrappedArray().init___sjs_js_Array([global]))), $as_sc_Seq($m_sc_Seq$().apply__sc_Seq__sc_GenTraversable($m_sci_Nil$())), new $c_s_Some().init___O(globalClosure), endNode, flowAnalysis);
+  var builder = new $c_Lcom_github_srtobi_inferium_prototype_flow_TemplateBuilder().init___sc_Seq__sc_Seq__sc_Seq__s_Option__sci_Map__scm_Map__Lcom_github_srtobi_inferium_prototype_flow_Nodes$Node__Lcom_github_srtobi_inferium_prototype_flow_FlowAnalysis(this.script$1$1.main$2, $as_sc_Seq($m_sc_Seq$().apply__sc_Seq__sc_GenTraversable(new $c_sjs_js_WrappedArray().init___sjs_js_Array([global]))), $as_sc_Seq($m_sc_Seq$().apply__sc_Seq__sc_GenTraversable($m_sci_Nil$())), new $c_s_Some().init___O(globalClosure), $as_sci_Map($m_s_Predef$().Map$2.apply__sc_Seq__sc_GenMap($m_sci_Nil$())), this.innerFunctionDefinitions$1, endNode, flowAnalysis);
   return builder.build__T2()
 });
 $c_Lcom_github_srtobi_inferium_prototype_flow_TemplateBuilder$$anon$1.prototype.init___Lcom_github_srtobi_inferium_prototype_Ast$Script = (function(script$1) {
   this.script$1$1 = script$1;
+  this.innerFunctionDefinitions$1 = new $c_scm_HashMap().init___();
   return this
 });
 var $d_Lcom_github_srtobi_inferium_prototype_flow_TemplateBuilder$$anon$1 = new $TypeData().initClass({
@@ -11654,7 +11936,8 @@ function $c_Lcom_github_srtobi_inferium_prototype_flow_TemplateBuilder$FunctionT
   $c_O.call(this);
   this.ast$1 = null;
   this.closure$1 = null;
-  this.flowAnalysis$1 = null
+  this.flowAnalysis$1 = null;
+  this.innerFunctionDefinitions$1 = null
 }
 $c_Lcom_github_srtobi_inferium_prototype_flow_TemplateBuilder$FunctionTemplate.prototype = new $h_O();
 $c_Lcom_github_srtobi_inferium_prototype_flow_TemplateBuilder$FunctionTemplate.prototype.constructor = $c_Lcom_github_srtobi_inferium_prototype_flow_TemplateBuilder$FunctionTemplate;
@@ -11663,19 +11946,32 @@ function $h_Lcom_github_srtobi_inferium_prototype_flow_TemplateBuilder$FunctionT
   /*<skip>*/
 }
 $h_Lcom_github_srtobi_inferium_prototype_flow_TemplateBuilder$FunctionTemplate.prototype = $c_Lcom_github_srtobi_inferium_prototype_flow_TemplateBuilder$FunctionTemplate.prototype;
-$c_Lcom_github_srtobi_inferium_prototype_flow_TemplateBuilder$FunctionTemplate.prototype.instantiate__sc_Seq__sc_Seq__Lcom_github_srtobi_inferium_prototype_flow_Nodes$Node__T2 = (function(closures, arguments$2, endNode) {
+$c_Lcom_github_srtobi_inferium_prototype_flow_TemplateBuilder$FunctionTemplate.prototype.instantiate__sc_Seq__sc_Seq__sci_Map__Lcom_github_srtobi_inferium_prototype_flow_Nodes$Node__T2 = (function(closures, arguments$2, callStack, endNode) {
   var jsx$2 = this.ast$1.block$3;
   var jsx$1 = this.ast$1.params$3;
   var this$1 = $m_sc_Seq$();
-  var builder = new $c_Lcom_github_srtobi_inferium_prototype_flow_TemplateBuilder().init___sc_Seq__sc_Seq__sc_Seq__s_Option__Lcom_github_srtobi_inferium_prototype_flow_Nodes$Node__Lcom_github_srtobi_inferium_prototype_flow_FlowAnalysis(jsx$2, closures, $as_sc_Seq(jsx$1.zip__sc_GenIterable__scg_CanBuildFrom__O(arguments$2, this$1.ReusableCBFInstance$2)), new $c_s_Some().init___O(this.closure$1), endNode, this.flowAnalysis$1);
+  var builder = new $c_Lcom_github_srtobi_inferium_prototype_flow_TemplateBuilder().init___sc_Seq__sc_Seq__sc_Seq__s_Option__sci_Map__scm_Map__Lcom_github_srtobi_inferium_prototype_flow_Nodes$Node__Lcom_github_srtobi_inferium_prototype_flow_FlowAnalysis(jsx$2, closures, $as_sc_Seq(jsx$1.zip__sc_GenIterable__scg_CanBuildFrom__O(arguments$2, this$1.ReusableCBFInstance$2)), new $c_s_Some().init___O(this.closure$1), callStack, this.innerFunctionDefinitions$1, endNode, this.flowAnalysis$1);
   return builder.build__T2()
 });
 $c_Lcom_github_srtobi_inferium_prototype_flow_TemplateBuilder$FunctionTemplate.prototype.init___Lcom_github_srtobi_inferium_prototype_Ast$Function__Lcom_github_srtobi_inferium_prototype_flow_Templates$Closure__Lcom_github_srtobi_inferium_prototype_flow_FlowAnalysis = (function(ast, closure, flowAnalysis) {
   this.ast$1 = ast;
   this.closure$1 = closure;
   this.flowAnalysis$1 = flowAnalysis;
+  this.innerFunctionDefinitions$1 = new $c_scm_HashMap().init___();
   return this
 });
+function $is_Lcom_github_srtobi_inferium_prototype_flow_TemplateBuilder$FunctionTemplate(obj) {
+  return (!(!((obj && obj.$classData) && obj.$classData.ancestors.Lcom_github_srtobi_inferium_prototype_flow_TemplateBuilder$FunctionTemplate)))
+}
+function $as_Lcom_github_srtobi_inferium_prototype_flow_TemplateBuilder$FunctionTemplate(obj) {
+  return (($is_Lcom_github_srtobi_inferium_prototype_flow_TemplateBuilder$FunctionTemplate(obj) || (obj === null)) ? obj : $throwClassCastException(obj, "com.github.srtobi.inferium.prototype.flow.TemplateBuilder$FunctionTemplate"))
+}
+function $isArrayOf_Lcom_github_srtobi_inferium_prototype_flow_TemplateBuilder$FunctionTemplate(obj, depth) {
+  return (!(!(((obj && obj.$classData) && (obj.$classData.arrayDepth === depth)) && obj.$classData.arrayBase.ancestors.Lcom_github_srtobi_inferium_prototype_flow_TemplateBuilder$FunctionTemplate)))
+}
+function $asArrayOf_Lcom_github_srtobi_inferium_prototype_flow_TemplateBuilder$FunctionTemplate(obj, depth) {
+  return (($isArrayOf_Lcom_github_srtobi_inferium_prototype_flow_TemplateBuilder$FunctionTemplate(obj, depth) || (obj === null)) ? obj : $throwArrayCastException(obj, "Lcom.github.srtobi.inferium.prototype.flow.TemplateBuilder$FunctionTemplate;", depth))
+}
 var $d_Lcom_github_srtobi_inferium_prototype_flow_TemplateBuilder$FunctionTemplate = new $TypeData().initClass({
   Lcom_github_srtobi_inferium_prototype_flow_TemplateBuilder$FunctionTemplate: 0
 }, false, "com.github.srtobi.inferium.prototype.flow.TemplateBuilder$FunctionTemplate", {
@@ -11689,9 +11985,12 @@ function $c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$Functio
   $c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$Entry.call(this);
   this.ret$2 = null;
   this.params$2 = null;
+  this.id$2 = 0;
   this.hereGenerics$2 = null;
   this.$$undret$2 = null;
   this.$$undparams$2 = null;
+  this.printing$2 = false;
+  this.printed$2 = false;
   this.gatherer$2 = null;
   this.bitmap$0$2 = 0
 }
@@ -11702,6 +12001,13 @@ function $h_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$Functio
   /*<skip>*/
 }
 $h_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$FunctionEntry.prototype = $c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$FunctionEntry.prototype;
+$c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$FunctionEntry.prototype.id$lzycompute__p2__I = (function() {
+  if (((4 & this.bitmap$0$2) === 0)) {
+    this.id$2 = this.$$outer$1.com$github$srtobi$inferium$prototype$flow$TypeScriptPrinter$$nextId__I();
+    this.bitmap$0$2 = (4 | this.bitmap$0$2)
+  };
+  return this.id$2
+});
 $c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$FunctionEntry.prototype.print__sc_Set__T = (function(outerGenerics) {
   return this.print__p2__sc_Set__s_Option__T(outerGenerics, $m_s_None$())
 });
@@ -11709,50 +12015,47 @@ $c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$FunctionEntry.pr
   return this.gatherer$2.apply__scm_Set__sc_Set($as_scm_Set($m_scm_Set$().apply__sc_Seq__sc_GenTraversable($m_sci_Nil$())))
 });
 $c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$FunctionEntry.prototype.print__p2__sc_Set__s_Option__T = (function(outerGenerics, property) {
+  var paramTypes$lzy = new $c_sr_LazyRef().init___();
+  var returnString$lzy = new $c_sr_LazyRef().init___();
+  var paramsString$lzy = new $c_sr_LazyRef().init___();
+  var isRecursive = this.printing$2;
+  this.printing$2 = true;
   var this$1 = this.hereGenerics__p2__sc_Set();
   var innerGenerics = $as_sc_Set(this$1.union__sc_GenSet__O(outerGenerics));
   var gens = $as_sc_Set(this.hereGenerics__p2__sc_Set().$$minus$minus__sc_GenTraversableOnce__scg_Subtractable(outerGenerics));
-  var genericPrefix = this.$$outer$1.com$github$srtobi$inferium$prototype$flow$TypeScriptPrinter$$buildGenericDecl__sc_Set__T(gens);
-  var jsx$2 = this.params__p2__sc_Seq();
-  var jsx$1 = new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function($this, innerGenerics$1) {
-    return (function(x$8$2) {
-      var x$8 = $as_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$Entry(x$8$2);
-      return x$8.print__sc_Set__T(innerGenerics$1)
-    })
-  })(this, innerGenerics));
-  var this$2 = $m_sc_Seq$();
-  var paramTypes = $as_sc_Seq(jsx$2.map__F1__scg_CanBuildFrom__O(jsx$1, this$2.ReusableCBFInstance$2));
-  var returnString = this.ret__p2__Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$Entry().print__sc_Set__T(innerGenerics);
-  if ($is_s_Some(property)) {
-    var x2 = $as_s_Some(property);
-    var prop = $as_T(x2.value$2);
-    var jsx$5 = $m_s_Predef$().wrapRefArray__AO__scm_WrappedArray(this.$$outer$1.com$github$srtobi$inferium$prototype$flow$TypeScriptPrinter$$argNames$1);
-    var this$3 = $m_sc_Seq$();
-    var jsx$4 = $as_sc_TraversableLike(paramTypes.zip__sc_GenIterable__scg_CanBuildFrom__O(jsx$5, this$3.ReusableCBFInstance$2));
-    var jsx$3 = new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function(this$2$1) {
-      return (function(x0$2$2) {
-        var x0$2 = $as_T2(x0$2$2);
-        if ((x0$2 !== null)) {
-          var ty = $as_T(x0$2.$$und1__O());
-          var name = $as_T(x0$2.$$und2__O());
-          return new $c_s_StringContext().init___sc_Seq(new $c_sjs_js_WrappedArray().init___sjs_js_Array(["", ": ", ""])).s__sc_Seq__T(new $c_sjs_js_WrappedArray().init___sjs_js_Array([name, ty]))
-        } else {
-          throw new $c_s_MatchError().init___O(x0$2)
-        }
-      })
-    })(this));
-    var this$4 = $m_sc_Seq$();
-    var paramsString = $as_sc_TraversableOnce(jsx$4.map__F1__scg_CanBuildFrom__O(jsx$3, this$4.ReusableCBFInstance$2)).mkString__T__T(", ");
-    return new $c_s_StringContext().init___sc_Seq(new $c_sjs_js_WrappedArray().init___sjs_js_Array(["", "", "(", "): ", ""])).s__sc_Seq__T(new $c_sjs_js_WrappedArray().init___sjs_js_Array([prop, genericPrefix, paramsString, returnString]))
+  if (isRecursive) {
+    var name = new $c_s_StringContext().init___sc_Seq(new $c_sjs_js_WrappedArray().init___sjs_js_Array(["F", ""])).s__sc_Seq__T(new $c_sjs_js_WrappedArray().init___sjs_js_Array([this.id__p2__I()]));
+    if ((!this.printed$2)) {
+      this.printed$2 = true;
+      var genericPrefix = this.$$outer$1.com$github$srtobi$inferium$prototype$flow$TypeScriptPrinter$$buildGenericDecl__sc_Set__T(innerGenerics);
+      var globalString = new $c_s_StringContext().init___sc_Seq(new $c_sjs_js_WrappedArray().init___sjs_js_Array(["type ", "", " = (", ") => ", ""])).s__sc_Seq__T(new $c_sjs_js_WrappedArray().init___sjs_js_Array([name, genericPrefix, this.paramsString$1__p2__sc_Set__sr_LazyRef__sr_LazyRef__T(innerGenerics, paramTypes$lzy, paramsString$lzy), this.returnString$1__p2__sc_Set__sr_LazyRef__T(innerGenerics, returnString$lzy)]));
+      this.$$outer$1.com$github$srtobi$inferium$prototype$flow$TypeScriptPrinter$$addLine__T__V(globalString)
+    };
+    $m_s_Predef$().assert__Z__V(((innerGenerics === null) ? (outerGenerics === null) : $f_sc_GenSetLike__equals__O__Z(innerGenerics, outerGenerics)));
+    return (("" + new $c_s_StringContext().init___sc_Seq(new $c_sjs_js_WrappedArray().init___sjs_js_Array(["", ""])).s__sc_Seq__T(new $c_sjs_js_WrappedArray().init___sjs_js_Array([name]))) + this.$$outer$1.com$github$srtobi$inferium$prototype$flow$TypeScriptPrinter$$buildGenericDef__sc_Set__sc_Set__T(innerGenerics, outerGenerics))
   } else {
-    var x = $m_s_None$();
-    if ((x === property)) {
-      var paramsString$2 = paramTypes.mkString__T__T(", ");
-      return new $c_s_StringContext().init___sc_Seq(new $c_sjs_js_WrappedArray().init___sjs_js_Array(["", "(", ") => ", ""])).s__sc_Seq__T(new $c_sjs_js_WrappedArray().init___sjs_js_Array([genericPrefix, paramsString$2, returnString]))
+    var genericPrefix$2 = this.$$outer$1.com$github$srtobi$inferium$prototype$flow$TypeScriptPrinter$$buildGenericDecl__sc_Set__T(gens);
+    if ($is_s_Some(property)) {
+      var x2 = $as_s_Some(property);
+      var prop = $as_T(x2.value$2);
+      var result = new $c_s_StringContext().init___sc_Seq(new $c_sjs_js_WrappedArray().init___sjs_js_Array(["", "", "(", "): ", ""])).s__sc_Seq__T(new $c_sjs_js_WrappedArray().init___sjs_js_Array([prop, genericPrefix$2, this.paramsString$1__p2__sc_Set__sr_LazyRef__sr_LazyRef__T(innerGenerics, paramTypes$lzy, paramsString$lzy), this.returnString$1__p2__sc_Set__sr_LazyRef__T(innerGenerics, returnString$lzy)]))
     } else {
-      throw new $c_s_MatchError().init___O(property)
-    }
+      var x$3 = $m_s_None$();
+      if ((!(x$3 === property))) {
+        throw new $c_s_MatchError().init___O(property)
+      };
+      var paramsString = this.paramTypes$1__p2__sc_Set__sr_LazyRef__sc_Seq(innerGenerics, paramTypes$lzy).mkString__T__T(", ");
+      var result = new $c_s_StringContext().init___sc_Seq(new $c_sjs_js_WrappedArray().init___sjs_js_Array(["", "(", ") => ", ""])).s__sc_Seq__T(new $c_sjs_js_WrappedArray().init___sjs_js_Array([genericPrefix$2, paramsString, this.returnString$1__p2__sc_Set__sr_LazyRef__T(innerGenerics, returnString$lzy)]))
+    };
+    this.printing$2 = false;
+    return result
   }
+});
+$c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$FunctionEntry.prototype.returnString$1__p2__sc_Set__sr_LazyRef__T = (function(innerGenerics$1, returnString$lzy$1) {
+  return (returnString$lzy$1.$$undinitialized$1 ? $as_T(returnString$lzy$1.$$undvalue$1) : this.returnString$lzycompute$1__p2__sc_Set__sr_LazyRef__T(innerGenerics$1, returnString$lzy$1))
+});
+$c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$FunctionEntry.prototype.paramTypes$1__p2__sc_Set__sr_LazyRef__sc_Seq = (function(innerGenerics$1, paramTypes$lzy$1) {
+  return (paramTypes$lzy$1.$$undinitialized$1 ? $as_sc_Seq(paramTypes$lzy$1.$$undvalue$1) : this.paramTypes$lzycompute$1__p2__sc_Set__sr_LazyRef__sc_Seq(innerGenerics$1, paramTypes$lzy$1))
 });
 $c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$FunctionEntry.prototype.ret$lzycompute__p2__Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$Entry = (function() {
   if (((1 & this.bitmap$0$2) === 0)) {
@@ -11762,10 +12065,21 @@ $c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$FunctionEntry.pr
   this.$$undret$2 = null;
   return this.ret$2
 });
+$c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$FunctionEntry.prototype.id__p2__I = (function() {
+  return (((4 & this.bitmap$0$2) === 0) ? this.id$lzycompute__p2__I() : this.id$2)
+});
+$c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$FunctionEntry.prototype.returnString$lzycompute$1__p2__sc_Set__sr_LazyRef__T = (function(innerGenerics$1, returnString$lzy$1) {
+  if ((returnString$lzy$1 === null)) {
+    throw new $c_jl_NullPointerException().init___()
+  };
+  return (returnString$lzy$1.$$undinitialized$1 ? $as_T(returnString$lzy$1.$$undvalue$1) : $as_T(returnString$lzy$1.initialize__O__O(this.ret__p2__Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$Entry().print__sc_Set__T(innerGenerics$1))))
+});
 $c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$FunctionEntry.prototype.init___Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter__F0__F0 = (function($$outer, _ret, _params) {
   this.$$undret$2 = _ret;
   this.$$undparams$2 = _params;
   $c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$Entry.prototype.init___Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter.call(this, $$outer);
+  this.printing$2 = false;
+  this.printed$2 = false;
   this.gatherer$2 = new $c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$GenericGatherer().init___Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter__Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$Entry__F0($$outer, this, new $c_sjsr_AnonFunction0().init___sjs_js_Function0((function($this) {
     return (function() {
       var x$10 = $this.ret__p2__Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$Entry();
@@ -11790,11 +12104,59 @@ $c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$FunctionEntry.pr
   this.$$undparams$2 = null;
   return this.params$2
 });
+$c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$FunctionEntry.prototype.paramTypes$lzycompute$1__p2__sc_Set__sr_LazyRef__sc_Seq = (function(innerGenerics$1, paramTypes$lzy$1) {
+  if ((paramTypes$lzy$1 === null)) {
+    throw new $c_jl_NullPointerException().init___()
+  };
+  if (paramTypes$lzy$1.$$undinitialized$1) {
+    return $as_sc_Seq(paramTypes$lzy$1.$$undvalue$1)
+  } else {
+    var jsx$2 = this.params__p2__sc_Seq();
+    var jsx$1 = new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function($this, innerGenerics$1$1) {
+      return (function(x$8$2) {
+        var x$8 = $as_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$Entry(x$8$2);
+        return x$8.print__sc_Set__T(innerGenerics$1$1)
+      })
+    })(this, innerGenerics$1));
+    var this$1 = $m_sc_Seq$();
+    return $as_sc_Seq(paramTypes$lzy$1.initialize__O__O(jsx$2.map__F1__scg_CanBuildFrom__O(jsx$1, this$1.ReusableCBFInstance$2)))
+  }
+});
+$c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$FunctionEntry.prototype.paramsString$1__p2__sc_Set__sr_LazyRef__sr_LazyRef__T = (function(innerGenerics$1, paramTypes$lzy$1, paramsString$lzy$1) {
+  return (paramsString$lzy$1.$$undinitialized$1 ? $as_T(paramsString$lzy$1.$$undvalue$1) : this.paramsString$lzycompute$1__p2__sc_Set__sr_LazyRef__sr_LazyRef__T(innerGenerics$1, paramTypes$lzy$1, paramsString$lzy$1))
+});
 $c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$FunctionEntry.prototype.params__p2__sc_Seq = (function() {
   return (((2 & this.bitmap$0$2) === 0) ? this.params$lzycompute__p2__sc_Seq() : this.params$2)
 });
 $c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$FunctionEntry.prototype.hereGenerics__p2__sc_Set = (function() {
-  return (((4 & this.bitmap$0$2) === 0) ? this.hereGenerics$lzycompute__p2__sc_Set() : this.hereGenerics$2)
+  return (((8 & this.bitmap$0$2) === 0) ? this.hereGenerics$lzycompute__p2__sc_Set() : this.hereGenerics$2)
+});
+$c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$FunctionEntry.prototype.paramsString$lzycompute$1__p2__sc_Set__sr_LazyRef__sr_LazyRef__T = (function(innerGenerics$1, paramTypes$lzy$1, paramsString$lzy$1) {
+  if ((paramsString$lzy$1 === null)) {
+    throw new $c_jl_NullPointerException().init___()
+  };
+  if (paramsString$lzy$1.$$undinitialized$1) {
+    return $as_T(paramsString$lzy$1.$$undvalue$1)
+  } else {
+    var jsx$4 = this.paramTypes$1__p2__sc_Set__sr_LazyRef__sc_Seq(innerGenerics$1, paramTypes$lzy$1);
+    var jsx$3 = $m_s_Predef$().wrapRefArray__AO__scm_WrappedArray(this.$$outer$1.com$github$srtobi$inferium$prototype$flow$TypeScriptPrinter$$argNames$1);
+    var this$1 = $m_sc_Seq$();
+    var jsx$2 = $as_sc_TraversableLike(jsx$4.zip__sc_GenIterable__scg_CanBuildFrom__O(jsx$3, this$1.ReusableCBFInstance$2));
+    var jsx$1 = new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function($this) {
+      return (function(x0$2$2) {
+        var x0$2 = $as_T2(x0$2$2);
+        if ((x0$2 !== null)) {
+          var ty = $as_T(x0$2.$$und1__O());
+          var name = $as_T(x0$2.$$und2__O());
+          return new $c_s_StringContext().init___sc_Seq(new $c_sjs_js_WrappedArray().init___sjs_js_Array(["", ": ", ""])).s__sc_Seq__T(new $c_sjs_js_WrappedArray().init___sjs_js_Array([name, ty]))
+        } else {
+          throw new $c_s_MatchError().init___O(x0$2)
+        }
+      })
+    })(this));
+    var this$2 = $m_sc_Seq$();
+    return $as_T(paramsString$lzy$1.initialize__O__O($as_sc_TraversableOnce(jsx$2.map__F1__scg_CanBuildFrom__O(jsx$1, this$2.ReusableCBFInstance$2)).mkString__T__T(", ")))
+  }
 });
 $c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$FunctionEntry.prototype.generics__scm_Set__sc_Set = (function(seen) {
   return this.gatherer$2.apply__scm_Set__sc_Set(seen)
@@ -11806,13 +12168,13 @@ $c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$FunctionEntry.pr
   return this.print__p2__sc_Set__s_Option__T(outerGenerics, new $c_s_Some().init___O(property))
 });
 $c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$FunctionEntry.prototype.hereGenerics$lzycompute__p2__sc_Set = (function() {
-  if (((4 & this.bitmap$0$2) === 0)) {
+  if (((8 & this.bitmap$0$2) === 0)) {
     var jsx$2 = this.$$outer$1;
     var x$9 = this.ret__p2__Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$Entry();
     var jsx$1 = this.params__p2__sc_Seq();
     var this$1 = $m_sc_Seq$();
     this.hereGenerics$2 = jsx$2.com$github$srtobi$inferium$prototype$flow$TypeScriptPrinter$$calcGenerics__sc_Seq__scm_Set__sc_Set($as_sc_Seq(jsx$1.$$plus$colon__O__scg_CanBuildFrom__O(x$9, this$1.ReusableCBFInstance$2)), $as_scm_Set($m_scm_Set$().apply__sc_Seq__sc_GenTraversable($m_sci_Nil$())));
-    this.bitmap$0$2 = (4 | this.bitmap$0$2)
+    this.bitmap$0$2 = (8 | this.bitmap$0$2)
   };
   return this.hereGenerics$2
 });
@@ -11882,8 +12244,8 @@ $c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$GenericEntry.pro
     var this$5 = $m_s_None$()
   } else {
     var arg1$1 = this$4.get__O();
-    var x$11 = $as_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$Entry(arg1$1);
-    var this$5 = new $c_s_Some().init___O(x$11.generics__sc_Set())
+    var x$12 = $as_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$Entry(arg1$1);
+    var this$5 = new $c_s_Some().init___O(x$12.generics__sc_Set())
   };
   var that = $as_sc_GenSet((this$5.isEmpty__Z() ? $as_sc_Set($m_sc_Set$().apply__sc_Seq__sc_GenTraversable($m_sci_Nil$())) : this$5.get__O()));
   return $as_sc_Set(this$6.union__sc_GenSet__O(that))
@@ -11894,8 +12256,8 @@ $c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$GenericEntry.pro
     var this$2 = $m_s_None$()
   } else {
     var arg1 = this$1.get__O();
-    var x$12 = $as_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$Entry(arg1);
-    var this$2 = new $c_s_Some().init___O(x$12.generics__sc_Set().$$plus__O__sc_Set(this.name$2))
+    var x$13 = $as_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$Entry(arg1);
+    var this$2 = new $c_s_Some().init___O(x$13.generics__sc_Set().$$plus__O__sc_Set(this.name$2))
   };
   return $as_sc_Set((this$2.isEmpty__Z() ? $as_sc_Set($m_sc_Set$().apply__sc_Seq__sc_GenTraversable($m_sci_Nil$())) : this$2.get__O()))
 });
@@ -11930,19 +12292,7 @@ function $h_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$Interfa
 $h_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$InterfaceEntry.prototype = $c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$InterfaceEntry.prototype;
 $c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$InterfaceEntry.prototype.print__sc_Set__T = (function(outerGenerics) {
   this.printGlobal__p2__V();
-  var this$1 = this.undefinedGenerics__sc_Set().toSeq__sc_Seq();
-  var ord = $m_s_math_Ordering$String$();
-  var jsx$2 = $as_sc_TraversableLike($f_sc_SeqLike__sorted__s_math_Ordering__O(this$1, ord));
-  var jsx$1 = new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function($this, outerGenerics$1) {
-    return (function(g$2) {
-      var g = $as_T(g$2);
-      return (outerGenerics$1.contains__O__Z(g) ? g : "any")
-    })
-  })(this, outerGenerics));
-  var this$2 = $m_sc_Seq$();
-  var gens = $as_sc_Seq(jsx$2.map__F1__scg_CanBuildFrom__O(jsx$1, this$2.ReusableCBFInstance$2));
-  var genericPrefix = (gens.nonEmpty__Z() ? gens.mkString__T__T__T__T("<", ", ", ">") : "");
-  return (("" + this.name__p2__T()) + genericPrefix)
+  return (("" + this.name__p2__T()) + this.$$outer$1.com$github$srtobi$inferium$prototype$flow$TypeScriptPrinter$$buildGenericDef__sc_Set__sc_Set__T(this.undefinedGenerics__sc_Set(), outerGenerics))
 });
 $c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$InterfaceEntry.prototype.generics__sc_Set = (function() {
   return this.gatherer$2.apply__scm_Set__sc_Set($as_scm_Set($m_scm_Set$().apply__sc_Seq__sc_GenTraversable($m_sci_Nil$())))
@@ -12006,6 +12356,13 @@ $c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$InterfaceEntry.p
   this.$$undmembers$2 = null;
   return this.members$2
 });
+$c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$InterfaceEntry.prototype.member__sc_Seq = (function() {
+  var xo = this.$function__p2__s_Option();
+  var this$2 = xo.toList__sci_List();
+  var jsx$1 = this.members__p2__sc_Map().values__sc_Iterable();
+  var this$3 = $m_sc_Seq$();
+  return $as_sc_Seq(this$2.$$plus$plus__sc_GenTraversableOnce__scg_CanBuildFrom__O(jsx$1, this$3.ReusableCBFInstance$2))
+});
 $c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$InterfaceEntry.prototype.name__p2__T = (function() {
   return (((4 & this.bitmap$0$2) === 0) ? this.name$lzycompute__p2__T() : this.name$2)
 });
@@ -12017,20 +12374,12 @@ $c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$InterfaceEntry.p
   this.printed$2 = false;
   this.gatherer$2 = new $c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$GenericGatherer().init___Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter__Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$Entry__F0($$outer, this, new $c_sjsr_AnonFunction0().init___sjs_js_Function0((function($this) {
     return (function() {
-      var xo = $this.$function__p2__s_Option();
-      var this$2 = xo.toList__sci_List();
-      var jsx$1 = $this.members__p2__sc_Map().values__sc_Iterable();
-      var this$3 = $m_sc_Seq$();
-      return $as_sc_Seq(this$2.$$plus$plus__sc_GenTraversableOnce__scg_CanBuildFrom__O(jsx$1, this$3.ReusableCBFInstance$2))
+      return $this.member__sc_Seq()
     })
   })(this)));
-  this.undefinedGenericGatherer$2 = new $c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$UndefinedGenericGatherer().init___Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter__Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$Entry__F0($$outer, this, new $c_sjsr_AnonFunction0().init___sjs_js_Function0((function(this$2$1) {
+  this.undefinedGenericGatherer$2 = new $c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$UndefinedGenericGatherer().init___Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter__Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$Entry__F0($$outer, this, new $c_sjsr_AnonFunction0().init___sjs_js_Function0((function(this$2) {
     return (function() {
-      var xo$1 = this$2$1.$function__p2__s_Option();
-      var this$5 = xo$1.toList__sci_List();
-      var jsx$2 = this$2$1.members__p2__sc_Map().values__sc_Iterable();
-      var this$6 = $m_sc_Seq$();
-      return $as_sc_Seq(this$5.$$plus$plus__sc_GenTraversableOnce__scg_CanBuildFrom__O(jsx$2, this$6.ReusableCBFInstance$2))
+      return this$2.member__sc_Seq()
     })
   })(this)));
   return this
@@ -12073,9 +12422,9 @@ $h_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$UnionEntry.proto
 $c_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$UnionEntry.prototype.print__sc_Set__T = (function(outerGenerics) {
   var jsx$2 = this.values__p2__sc_Seq();
   var jsx$1 = new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function($this, outerGenerics$1) {
-    return (function(x$13$2) {
-      var x$13 = $as_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$Entry(x$13$2);
-      return x$13.print__sc_Set__T(outerGenerics$1)
+    return (function(x$14$2) {
+      var x$14 = $as_Lcom_github_srtobi_inferium_prototype_flow_TypeScriptPrinter$Entry(x$14$2);
+      return x$14.print__sc_Set__T(outerGenerics$1)
     })
   })(this, outerGenerics));
   var this$1 = $m_sc_Seq$();
@@ -12246,6 +12595,18 @@ $c_Lcom_github_srtobi_inferium_prototype_flow_ValueSink.prototype.set__Lcom_gith
   $m_s_Predef$().assert__Z__V((value !== null));
   this.com$github$srtobi$inferium$prototype$flow$ValueSink$$currentValue$2 = value
 });
+function $is_Lcom_github_srtobi_inferium_prototype_flow_ValueSink(obj) {
+  return (!(!((obj && obj.$classData) && obj.$classData.ancestors.Lcom_github_srtobi_inferium_prototype_flow_ValueSink)))
+}
+function $as_Lcom_github_srtobi_inferium_prototype_flow_ValueSink(obj) {
+  return (($is_Lcom_github_srtobi_inferium_prototype_flow_ValueSink(obj) || (obj === null)) ? obj : $throwClassCastException(obj, "com.github.srtobi.inferium.prototype.flow.ValueSink"))
+}
+function $isArrayOf_Lcom_github_srtobi_inferium_prototype_flow_ValueSink(obj, depth) {
+  return (!(!(((obj && obj.$classData) && (obj.$classData.arrayDepth === depth)) && obj.$classData.arrayBase.ancestors.Lcom_github_srtobi_inferium_prototype_flow_ValueSink)))
+}
+function $asArrayOf_Lcom_github_srtobi_inferium_prototype_flow_ValueSink(obj, depth) {
+  return (($isArrayOf_Lcom_github_srtobi_inferium_prototype_flow_ValueSink(obj, depth) || (obj === null)) ? obj : $throwArrayCastException(obj, "Lcom.github.srtobi.inferium.prototype.flow.ValueSink;", depth))
+}
 var $d_Lcom_github_srtobi_inferium_prototype_flow_ValueSink = new $TypeData().initClass({
   Lcom_github_srtobi_inferium_prototype_flow_ValueSink: 0
 }, false, "com.github.srtobi.inferium.prototype.flow.ValueSink", {
@@ -41359,45 +41720,48 @@ $h_sci_ListMap.prototype = $c_sci_ListMap.prototype;
 $c_sci_ListMap.prototype.repr__scg_Subtractable = (function() {
   return this
 });
-$c_sci_ListMap.prototype.$$minus__O__scg_Subtractable = (function(elem) {
-  return this.$$minus__O__sci_ListMap(elem)
-});
 $c_sci_ListMap.prototype.value__O = (function() {
   throw new $c_ju_NoSuchElementException().init___T("value of empty map")
 });
-$c_sci_ListMap.prototype.thisCollection__sc_Traversable = (function() {
-  return this
+$c_sci_ListMap.prototype.$$minus__O__scg_Subtractable = (function(elem) {
+  return this.$$minus__O__sci_ListMap(elem)
 });
 $c_sci_ListMap.prototype.isEmpty__Z = (function() {
   return true
 });
+$c_sci_ListMap.prototype.thisCollection__sc_Traversable = (function() {
+  return this
+});
 $c_sci_ListMap.prototype.mapValues__F1__sc_Map = (function(f) {
   return new $c_sci_MapLike$$anon$2().init___sci_MapLike__F1(this, f)
 });
-$c_sci_ListMap.prototype.empty__sc_Map = (function() {
-  return $m_sci_ListMap$EmptyListMap$()
+$c_sci_ListMap.prototype.$$plus__T2__sci_Map = (function(kv) {
+  return this.$$plus__T2__sci_ListMap(kv)
 });
 $c_sci_ListMap.prototype.$$minus__O__sc_Map = (function(key) {
   return this.$$minus__O__sci_ListMap(key)
 });
-$c_sci_ListMap.prototype.empty__sci_Map = (function() {
+$c_sci_ListMap.prototype.empty__sc_Map = (function() {
   return $m_sci_ListMap$EmptyListMap$()
 });
-$c_sci_ListMap.prototype.seq__sc_Map = (function() {
-  return this
+$c_sci_ListMap.prototype.empty__sci_Map = (function() {
+  return $m_sci_ListMap$EmptyListMap$()
 });
 $c_sci_ListMap.prototype.size__I = (function() {
   return 0
 });
-$c_sci_ListMap.prototype.$$plus__T2__sci_ListMap = (function(kv) {
-  return new $c_sci_ListMap$Node().init___sci_ListMap__O__O(this, kv.$$und1__O(), kv.$$und2__O())
+$c_sci_ListMap.prototype.seq__sc_Map = (function() {
+  return this
+});
+$c_sci_ListMap.prototype.key__O = (function() {
+  throw new $c_ju_NoSuchElementException().init___T("key of empty map")
 });
 $c_sci_ListMap.prototype.iterator__sc_Iterator = (function() {
   var this$1 = this.reverseList$1__p5__sci_List();
   return new $c_sc_LinearSeqLike$$anon$1().init___sc_LinearSeqLike(this$1)
 });
-$c_sci_ListMap.prototype.key__O = (function() {
-  throw new $c_ju_NoSuchElementException().init___T("key of empty map")
+$c_sci_ListMap.prototype.$$plus__T2__sci_ListMap = (function(kv) {
+  return new $c_sci_ListMap$Node().init___sci_ListMap__O__O(this, kv.$$und1__O(), kv.$$und2__O())
 });
 $c_sci_ListMap.prototype.updated__O__O__sci_ListMap = (function(key, value) {
   return new $c_sci_ListMap$Node().init___sci_ListMap__O__O(this, key, value)
@@ -41462,6 +41826,11 @@ $c_sci_Map$EmptyMap$.prototype.apply__O__O = (function(key) {
 });
 $c_sci_Map$EmptyMap$.prototype.$$minus__O__scg_Subtractable = (function(elem) {
   return this
+});
+$c_sci_Map$EmptyMap$.prototype.$$plus__T2__sci_Map = (function(kv) {
+  var key = kv.$$und1__O();
+  var value = kv.$$und2__O();
+  return new $c_sci_Map$Map1().init___O__O(key, value)
 });
 $c_sci_Map$EmptyMap$.prototype.$$minus__O__sc_Map = (function(key) {
   return this
@@ -41561,6 +41930,9 @@ $c_sci_Map$Map1.prototype.init___O__O = (function(key1, value1) {
   this.value1$5 = value1;
   return this
 });
+$c_sci_Map$Map1.prototype.$$plus__T2__sci_Map = (function(kv) {
+  return this.updated__O__O__sci_Map(kv.$$und1__O(), kv.$$und2__O())
+});
 $c_sci_Map$Map1.prototype.foreach__F1__V = (function(f) {
   f.apply__O__O(new $c_T2().init___O__O(this.key1$5, this.value1$5))
 });
@@ -41656,6 +42028,9 @@ $c_sci_Map$Map2.prototype.apply__O__O = (function(key) {
 });
 $c_sci_Map$Map2.prototype.$$minus__O__scg_Subtractable = (function(elem) {
   return this.$$minus__O__sci_Map(elem)
+});
+$c_sci_Map$Map2.prototype.$$plus__T2__sci_Map = (function(kv) {
+  return this.updated__O__O__sci_Map(kv.$$und1__O(), kv.$$und2__O())
 });
 $c_sci_Map$Map2.prototype.foreach__F1__V = (function(f) {
   f.apply__O__O(new $c_T2().init___O__O(this.key1$5, this.value1$5));
@@ -41764,6 +42139,9 @@ $c_sci_Map$Map3.prototype.apply__O__O = (function(key) {
 });
 $c_sci_Map$Map3.prototype.$$minus__O__scg_Subtractable = (function(elem) {
   return this.$$minus__O__sci_Map(elem)
+});
+$c_sci_Map$Map3.prototype.$$plus__T2__sci_Map = (function(kv) {
+  return this.updated__O__O__sci_Map(kv.$$und1__O(), kv.$$und2__O())
 });
 $c_sci_Map$Map3.prototype.foreach__F1__V = (function(f) {
   f.apply__O__O(new $c_T2().init___O__O(this.key1$5, this.value1$5));
@@ -41879,6 +42257,9 @@ $c_sci_Map$Map4.prototype.apply__O__O = (function(key) {
 });
 $c_sci_Map$Map4.prototype.$$minus__O__scg_Subtractable = (function(elem) {
   return this.$$minus__O__sci_Map(elem)
+});
+$c_sci_Map$Map4.prototype.$$plus__T2__sci_Map = (function(kv) {
+  return this.updated__O__O__sci_Map(kv.$$und1__O(), kv.$$und2__O())
 });
 $c_sci_Map$Map4.prototype.foreach__F1__V = (function(f) {
   f.apply__O__O(new $c_T2().init___O__O(this.key1$5, this.value1$5));
@@ -41998,6 +42379,9 @@ $c_sci_MapLike$$anon$2.prototype.$$plus__T2__sc_Map = (function(kv) {
 });
 $c_sci_MapLike$$anon$2.prototype.mapValues__F1__sc_Map = (function(f) {
   return new $c_sci_MapLike$$anon$2().init___sci_MapLike__F1(this, f)
+});
+$c_sci_MapLike$$anon$2.prototype.$$plus__T2__sci_Map = (function(kv) {
+  return $f_sci_DefaultMap__$$plus__T2__sci_Map(this, kv)
 });
 $c_sci_MapLike$$anon$2.prototype.companion__scg_GenericCompanion = (function() {
   return $m_sci_Iterable$()
@@ -42384,6 +42768,9 @@ $c_sci_HashMap.prototype.mapValues__F1__sc_Map = (function(f) {
 });
 $c_sci_HashMap.prototype.get0__O__I__I__s_Option = (function(key, hash, level) {
   return $m_s_None$()
+});
+$c_sci_HashMap.prototype.$$plus__T2__sci_Map = (function(kv) {
+  return this.$$plus__T2__sci_HashMap(kv)
 });
 $c_sci_HashMap.prototype.foreach__F1__V = (function(f) {
   /*<skip>*/
@@ -42917,11 +43304,11 @@ $c_sci_ListMap$Node.prototype.removeInternal__p6__O__sci_ListMap__sci_List__sci_
 $c_sci_ListMap$Node.prototype.apply__O__O = (function(k) {
   return this.applyInternal__p6__sci_ListMap__O__O(this, k)
 });
-$c_sci_ListMap$Node.prototype.value__O = (function() {
-  return this.value$6
-});
 $c_sci_ListMap$Node.prototype.$$minus__O__scg_Subtractable = (function(elem) {
   return this.removeInternal__p6__O__sci_ListMap__sci_List__sci_ListMap(elem, this, $m_sci_Nil$())
+});
+$c_sci_ListMap$Node.prototype.value__O = (function() {
+  return this.value$6
 });
 $c_sci_ListMap$Node.prototype.isEmpty__Z = (function() {
   return false
@@ -42963,6 +43350,9 @@ $c_sci_ListMap$Node.prototype.sizeInternal__p6__sci_ListMap__I__I = (function(cu
     }
   }
 });
+$c_sci_ListMap$Node.prototype.$$plus__T2__sci_Map = (function(kv) {
+  return this.$$plus__T2__sci_ListMap(kv)
+});
 $c_sci_ListMap$Node.prototype.$$minus__O__sc_Map = (function(key) {
   return this.removeInternal__p6__O__sci_ListMap__sci_List__sci_ListMap(key, this, $m_sci_Nil$())
 });
@@ -42987,9 +43377,6 @@ $c_sci_ListMap$Node.prototype.$$minus__O__sci_ListMap = (function(k) {
 $c_sci_ListMap$Node.prototype.get__O__s_Option = (function(k) {
   return this.getInternal__p6__sci_ListMap__O__s_Option(this, k)
 });
-$c_sci_ListMap$Node.prototype.contains__O__Z = (function(k) {
-  return this.containsInternal__p6__sci_ListMap__O__Z(this, k)
-});
 $c_sci_ListMap$Node.prototype.init___sci_ListMap__O__O = (function($$outer, key, value) {
   this.key$6 = key;
   this.value$6 = value;
@@ -42999,6 +43386,9 @@ $c_sci_ListMap$Node.prototype.init___sci_ListMap__O__O = (function($$outer, key,
     this.$$outer$6 = $$outer
   };
   return this
+});
+$c_sci_ListMap$Node.prototype.contains__O__Z = (function(k) {
+  return this.containsInternal__p6__sci_ListMap__O__Z(this, k)
 });
 $c_sci_ListMap$Node.prototype.containsInternal__p6__sci_ListMap__O__Z = (function(cur, k) {
   _containsInternal: while (true) {
@@ -49765,4 +50155,4 @@ document.body.appendChild(target);
 /***/ })
 
 },[91]);
-//# sourceMappingURL=main-d20526a0d4f1c791fcf7.js.map
+//# sourceMappingURL=main-48b7e04b86a86a70d047.js.map
