@@ -6,9 +6,9 @@ import {observable} from 'mobx'
 import * as mobx from 'mobx-react'
 import MonacoEditor from 'react-monaco-editor';
 import {predefs} from './predefs'
-import './inferium-web-fastopt'
+import * as inferium from './simplejsapi-fastopt'
 
-declare namespace Inferium {
+declare namespace InferiumSimple {
     function generateTypeDefinition(code: string): string
 } 
 
@@ -21,13 +21,13 @@ export class InputPanel extends React.Component<{}, {}> {
     private code: string
 
     @observable
-    private result: string
+    private result: string = ""
 
     @observable
     private error: string | undefined = undefined
 
     @observable
-    private example: string
+    private example: string = ""
 
     constructor() {
         super({})
@@ -38,9 +38,10 @@ export class InputPanel extends React.Component<{}, {}> {
     private infer(code: string) {
         this.error = ""
         try {
-            this.result = Inferium.generateTypeDefinition(code)
+            this.result = inferium.InferiumSimple.generateTypeDefinition(code)
         } catch(e) {
             this.error = e.toString()
+            console.log(e)
         }
     }
 
@@ -68,9 +69,6 @@ export class InputPanel extends React.Component<{}, {}> {
                                 onChange={code => this.code = code}
                                 />
                     </div>
-                </div>
-                <div style={{textAlign: "center"}}>
-                    Recursion works... mostly :D ... this is an alpha version after all 
                 </div>
                 <div className="panel panel-default config-panel">
                     <span>
